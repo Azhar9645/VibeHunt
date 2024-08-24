@@ -119,11 +119,11 @@ class SignUpScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     MyTextfield(
                       controller:
-                          phoneController, // Use a separate controller for phone number
+                          phoneController, 
                       hintText: 'Enter your phone number',
                       prefixIcon: const Icon(Icons.phone_outlined),
                       keyboardType:
-                          TextInputType.phone, // Set keyboard type to phone
+                          TextInputType.phone, 
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Phone number is required';

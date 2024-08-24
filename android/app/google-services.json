@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "821041319012",
+    "project_id": "vibehunt-47f67",
+    "storage_bucket": "vibehunt-47f67.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821041319012:android:5de840adb8c56ac190a371",
+        "android_client_info": {
+          "package_name": "com.example.vibehunt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCjtB8psr4nOkSPzduKtmVfAl8qB_vYdM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821041319012:android:fcf87157e50ca28190a371",
+        "android_client_info": {
+          "package_name": "com.vibehunt.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCjtB8psr4nOkSPzduKtmVfAl8qB_vYdM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

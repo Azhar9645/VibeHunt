@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vibehunt/presentation/screens/base/base_screen.dart';
 import 'package:vibehunt/presentation/screens/home/home_screen.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:vibehunt/presentation/widgets/custom_buttons.dart';
@@ -10,7 +11,7 @@ import 'package:vibehunt/presentation/widgets/main_button.dart';
 import 'package:vibehunt/presentation/widgets/textfield.dart';
 
 class SignInScreen extends StatelessWidget {
-  SignInScreen({Key? key}) : super(key: key);
+  SignInScreen({super.key});
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -28,7 +29,7 @@ class SignInScreen extends StatelessWidget {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) {
-                return HomeScreen();
+                return BaseScreen();
               }),
               (Route<dynamic> route) => false,
             );
@@ -109,17 +110,16 @@ class SignInScreen extends StatelessWidget {
                         }
                         return MyButton(
                           text: 'Sign In',
-                          onPressed: () async{
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                                  context.read<SignInBloc>().add(
-                                      SignInButtonClickEvent(
-                                          email: emailController.text,
-                                          password: passwordController.text));
-                                } else {
-                                  customSnackbar(
-                                      context, 'Fill All Fields', kRed,Icons.fast_forward);
-                                }
-
+                              context.read<SignInBloc>().add(
+                                  SignInButtonClickEvent(
+                                      email: emailController.text,
+                                      password: passwordController.text));
+                            } else {
+                              customSnackbar(context, 'Fill All Fields', kRed,
+                                  Icons.fast_forward);
+                            }
                           },
                         );
                       },
@@ -131,24 +131,32 @@ class SignInScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          // Define your onTap action here
-                        },
-                        child: Container(
-                          width: 55, // Width of the round button
-                          height: 55, // Height of the round button
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle, // Make it circular
-                            color:
-                                Colors.white, // Background color of the button
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/google.png',
+                      child: BlocBuilder<SignInBloc, SignInState>(
+                        builder: (context, state) {
+                          if (state is GoogleAuthLoadingstate) {
+                            return const CircularProgressIndicator();
+                          }
+                          return GestureDetector(
+                            onTap: () async {
+                              context
+                                  .read<SignInBloc>()
+                                  .add(OnGoogleSignInButtonClickedEvent());
+                            },
+                            child: Container(
+                              width: 55,
+                              height: 55,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'assets/google.png',
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -192,7 +200,7 @@ class SignInScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       ),
     );
   }

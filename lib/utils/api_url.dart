@@ -5,5 +5,8 @@ class ApiEndpoints {
   // UserUrl
   static const String signUp = '/users/send-otp';
   static const String verifyOtp = '/users/verify-otp';
+  static const String login = '/users/login';
+  static const String googleLogin = '/users/google-login';
+
 
 }

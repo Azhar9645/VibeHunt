@@ -1,11 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vibehunt/firebase_options.dart';
 import 'package:vibehunt/presentation/screens/login/signin.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/otp_verification/otp_verification_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_up_bloc/sign_up_bloc.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseAuth.instance.setLanguageCode('en');
   runApp(const MyApp());
 }
 
@@ -21,6 +30,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => OtpVerificationBloc(),
+        ),
+        BlocProvider(
+          create: (context) => SignInBloc(),
         )
       ],
       child: MaterialApp(

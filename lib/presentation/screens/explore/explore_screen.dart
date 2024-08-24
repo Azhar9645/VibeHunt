@@ -1,10 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:vibehunt/presentation/screens/home/switch.dart';
-import 'package:vibehunt/utils/constants.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+class ExploreScreen extends StatelessWidget {
+  ExploreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,93 +14,28 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Hi, AZHAR', style: j24),
-                const AdvanceSwitchFlutter(
-                  radius: 20.0,
-                  thumbRadius: 12.0,
-                  activeChild: Icon(Icons.check, color: Colors.white),
-                  inactiveChild: Icon(Icons.close, color: Colors.white),
-                  thirdChild: Icon(Icons.star, color: Colors.yellow),
+            const SizedBox(height: 10,),
+            SizedBox(
+              height: 50.0, // Adjust the height value as needed
+              child: CupertinoSearchTextField(
+                prefixIcon: const Icon(
+                  CupertinoIcons.search,
+                  color: Colors.white,
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Share Your Ideas and \nConnect with Friends!',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
+                placeholder: 'Search...',
+                onChanged: (value) {
+                  // Handle search logic here
+                },
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Story Section and Grid Section in SingleChildScrollView
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Story Section
-                    SizedBox(
-                      height: 100, // Adjust the height as needed
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: storyImages.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  width:
-                                      80, // Slightly larger to accommodate the border
-                                  height:
-                                      80, // Slightly larger to accommodate the border
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: kGreen, // Border color
-                                      width: 2.0, // Border width
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                        22), // Border radius slightly larger
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        20), // Circular corners
-                                    child: Container(
-                                      width: 80, // Adjust width as needed
-                                      height: 80, // Adjust height as needed
-                                      child: Image.network(
-                                        storyImages[index],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  storyNames[index],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    // Grid Section
                     MasonryGridView.builder(
                       physics:
-                          const NeverScrollableScrollPhysics(), // Disable GridView scrolling
+                          const NeverScrollableScrollPhysics(), 
                       shrinkWrap: true,
                       gridDelegate:
                           const SliverSimpleGridDelegateWithFixedCrossAxisCount(
