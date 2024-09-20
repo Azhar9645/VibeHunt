@@ -1,163 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:vibehunt/presentation/screens/home/switch.dart';
+import 'package:vibehunt/presentation/screens/home/see_all_user.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_users_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+String logginedUserToken = '';
+String logginedUserId = '';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Hi, AZHAR', style: j24),
-                const AdvanceSwitchFlutter(
-                  radius: 20.0,
-                  thumbRadius: 12.0,
-                  activeChild: Icon(Icons.check, color: Colors.white),
-                  inactiveChild: Icon(Icons.close, color: Colors.white),
-                  thirdChild: Icon(Icons.star, color: Colors.yellow),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Share Your Ideas and \nConnect with Friends!',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 16),
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-            // Story Section and Grid Section in SingleChildScrollView
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Story Section
-                    SizedBox(
-                      height: 100, // Adjust the height as needed
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: storyImages.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  width:
-                                      80, // Slightly larger to accommodate the border
-                                  height:
-                                      80, // Slightly larger to accommodate the border
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: kGreen, // Border color
-                                      width: 2.0, // Border width
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                        22), // Border radius slightly larger
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        20), // Circular corners
-                                    child: Container(
-                                      width: 80, // Adjust width as needed
-                                      height: 80, // Adjust height as needed
-                                      child: Image.network(
-                                        storyImages[index],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  storyNames[index],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    // Grid Section
-                    MasonryGridView.builder(
-                      physics:
-                          const NeverScrollableScrollPhysics(), // Disable GridView scrolling
-                      shrinkWrap: true,
-                      gridDelegate:
-                          const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                      ),
-                      itemCount: images.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.network(
-                                  images[index],
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Colors.grey,
-                                      height: 200,
-                                      width: double.infinity,
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.error,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 4.0),
-                              Text(
-                                keywords[index],
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+class _HomeScreenState extends State<HomeScreen> {
   final List<String> images = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcaNJcoE9hJ20j1K8H7Ml6872NyPN5zaJjQ&s',
     'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmF0dXJlfGVufDB8fDB8fHwy',
@@ -176,19 +34,282 @@ class HomeScreen extends StatelessWidget {
     'Sunny River',
   ];
 
-  final List<String> storyImages = [
-    'https://randomuser.me/api/portraits/men/1.jpg',
-    'https://randomuser.me/api/portraits/women/2.jpg',
-    'https://randomuser.me/api/portraits/men/3.jpg',
-    'https://randomuser.me/api/portraits/women/4.jpg',
-    'https://randomuser.me/api/portraits/men/5.jpg',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<FetchAllUsersBloc>()
+        .add(OnFetchAllUserEvent(page: 1, limit: 10));
+  }
 
-  final List<String> storyNames = [
-    'John',
-    'Emma',
-    'Michael',
-    'Sophia',
-    'James',
-  ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            _buildHeader(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSeeAllAndStorySection(context),
+                    _buildMasonryGrid(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('Hi, AZHAR', style: j24),
+        IconButton(
+          icon: const Icon(
+            Icons.notifications_active_outlined,
+            color: kWhiteColor,
+            size: 35,
+          ),
+          onPressed: () {
+            // Action for notification icon
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSeeAllAndStorySection(BuildContext context) {
+    return BlocBuilder<FetchAllUsersBloc, FetchAllUsersState>(
+      builder: (context, state) {
+        if (state is FetchAllUsersLoadingState) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is FetchAllUsersSuccessState) {
+          final users = state.users;
+
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      // Navigate to the 'See All' page and pass the list of users
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SeeAllUsersPage(users: users),
+                        ),
+                      );
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'See All',
+                          style: TextStyle(
+                            color: kGreen, // Customize the button color
+                          ),
+                        ),
+                        SizedBox(
+                            width:
+                                4), // Add space between the text and the icon
+                        Icon(
+                          Icons.arrow_forward_ios, // Customize the icon
+                          color: kGreen, // Customize the icon color
+                          size: 16, // Customize the size
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              SizedBox(
+                height: 100, // Adjust the height as needed
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            width:
+                                80, // Slightly larger to accommodate the border
+                            height:
+                                80, // Slightly larger to accommodate the border
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: kGreen, // Border color
+                                width: 2.0, // Border width
+                              ),
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.network(
+                                users[index]
+                                    .profilePic, // Use user profile picture
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            users[index].userName, // Use user name
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        } else if (state is FetchAllUsersErrorState) {
+          return Center(child: Text('Failed to load users: ${state.error}'));
+        } else {
+          return const Center(child: Text('No users available.'));
+        }
+      },
+    );
+  }
+
+  // Widget _buildSeeAllRow() {
+  //   return TextButton(
+  //     onPressed: () {
+  //       // Define action for "See All" button here
+  //     },
+  //     child: const Row(
+  //       mainAxisAlignment: MainAxisAlignment.end,
+  //       children: [
+  //         Text(
+  //           'See All',
+  //           style: TextStyle(color: kGreen),
+  //         ),
+  //         SizedBox(width: 4),
+  //         Icon(
+  //           Icons.arrow_forward_ios,
+  //           color: kGreen,
+  //           size: 16,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildStorySection() {
+  //   return SizedBox(
+  //     height: 100,
+  //     child: ListView.builder(
+  //       scrollDirection: Axis.horizontal,
+  //       itemCount: storyImages.length,
+  //       itemBuilder: (context, index) {
+  //         return Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  //           child: Column(
+  //             children: [
+  //               _buildStoryCircle(storyImages[index]),
+  //               const SizedBox(height: 2),
+  //               Text(
+  //                 storyNames[index],
+  //                 style: const TextStyle(
+  //                   color: Colors.white,
+  //                   fontSize: 12,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  Widget _buildStoryCircle(String imageUrl) {
+    return Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        border: Border.all(color: kGreen, width: 2.0),
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMasonryGrid() {
+    return MasonryGridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      itemCount: images.length,
+      itemBuilder: (context, index) {
+        return _buildMasonryTile(images[index], keywords[index]);
+      },
+    );
+  }
+
+  Widget _buildMasonryTile(String imageUrl, String keyword) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.grey,
+                  height: 200,
+                  width: double.infinity,
+                  child: const Center(
+                    child: Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            keyword,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 MaterialButton loadingButton({
-  required Size media,
   required VoidCallback onPressed,
   required Color color,
 }) {
   return MaterialButton(
     onPressed: onPressed,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(30), // Capsule shape
+      borderRadius: BorderRadius.circular(30.r), // Capsule shape
     ),
-    minWidth: media.width * 0.9, // Width of the button
-    height: media.height * 0.06, // Height of the button
+    minWidth: 0.9.sw, // Width of the button
+    height: 0.06.sh, // Height of the button
     color: color,
     elevation: 6.0, // Slight shadow for a floating effect
     padding: EdgeInsets.zero, // Remove vertical padding
     child: Center(
       child: SizedBox(
-        height: 30, // Fixed height for the loading animation container
+        height: 30.h, // Fixed height for the loading animation container
         child: LoadingAnimationWidget.newtonCradle(
           color: Colors.white,
-          size: 100, // Increase this size to make the dots larger
+          size: 100.sp, // Use sp for sizing the loading animation dots
         ),
       ),
     ),

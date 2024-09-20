@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:vibehunt/presentation/screens/add_post/post_create_screen.dart';
+import 'package:vibehunt/presentation/screens/add_post/bottom_sheet.dart';
 import 'package:vibehunt/presentation/screens/explore/explore_screen.dart';
 import 'package:vibehunt/presentation/screens/home/home_screen.dart';
+import 'package:vibehunt/presentation/screens/message/chat_list_screen.dart';
+import 'package:vibehunt/presentation/screens/profile/profile_screen.dart';
 import 'package:vibehunt/utils/constants.dart';
 
 final ValueNotifier<int> currentPage = ValueNotifier(0);
 
 class BaseScreen extends StatelessWidget {
+  
   BaseScreen({super.key});
 
   final List<Widget> pages = [
     HomeScreen(),
     ExploreScreen(),
-    
+    ChatListScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -55,14 +61,14 @@ class BaseScreen extends StatelessWidget {
                 buildNavBarItem(
                   icon: Icons.message,
                   label: 'Messages',
-                  index: 3,
+                  index: 2,
                   value: value,
                 ),
                 // Profile
                 buildNavBarItem(
                   icon: Icons.person,
                   label: 'Profile',
-                  index: 4,
+                  index: 3,
                   value: value,
                 ),
               ],
@@ -72,7 +78,7 @@ class BaseScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          currentPage.value = 2; // Navigate to AddPost screen
+          showCustomBottomSheet(context); 
         },
         backgroundColor: kGreen,
         child: const Icon(Icons.add, size: 36),

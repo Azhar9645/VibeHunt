@@ -2,11 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vibehunt/firebase_options.dart';
-import 'package:vibehunt/presentation/screens/login/signin.dart';
+import 'package:vibehunt/presentation/screens/info/info1.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/follow_unfollow_bloc/follow_unfollow_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/edit_user_profile/edit_user_profile_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_users_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/forget_password/forget_password_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/otp_verification/otp_verification_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/post_Upload/post_upload_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_bloc/sign_in_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_user_details_bloc/signin_user_details_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_up_bloc/sign_up_bloc.dart';
 
 void main() async {
@@ -23,46 +31,77 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => SignUpBloc(),
-        ),
-        BlocProvider(
-          create: (context) => OtpVerificationBloc(),
-        ),
-        BlocProvider(
-          create: (context) => SignInBloc(),
-        )
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'VibeHunt',
-        theme: ThemeData(
-          scaffoldBackgroundColor:
-              Colors.black, // Set the background color to black
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple,
-            brightness: Brightness.dark, // Use dark mode for the entire app
-          ),
-          appBarTheme: const AppBarTheme(
-            backgroundColor:
-                Colors.black, // Set AppBar background color to black
-            iconTheme: IconThemeData(
-              color: Colors.white, // Set AppBar icon color to white
+    return ScreenUtilInit(
+      designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => SignUpBloc(),
             ),
+            BlocProvider(
+              create: (context) => OtpVerificationBloc(),
+            ),
+            BlocProvider(
+              create: (context) => SignInBloc(),
+            ),
+            BlocProvider(
+              create: (context) => SigninUserDetailsBloc(),
+            ),
+            BlocProvider(
+              create: (context) => PostUploadBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FetchMyPostBloc(),
+            ),
+            BlocProvider(
+              create: (context) => EditUserProfileBloc(),
+            ),
+            BlocProvider(
+              create: (context) => ForgetPasswordBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FetchAllUsersBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FollowUnfollowBloc(),
+            )
+          ],
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'VibeHunt',
+            theme: ThemeData(
+              scaffoldBackgroundColor:
+                  Colors.black, // Set the background color to black
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.deepPurple,
+                brightness: Brightness.dark, // Use dark mode for the entire app
+              ),
+              appBarTheme: const AppBarTheme(
+                backgroundColor:
+                    Colors.black, // Set AppBar background color to black
+                iconTheme: IconThemeData(
+                  color: Colors.white, // Set AppBar icon color to white
+                ),
+              ),
+              textTheme: TextTheme(
+                displayLarge:
+                    GoogleFonts.jost(fontSize: 24.sp, color: Colors.white),
+                titleMedium:
+                    GoogleFonts.jost(fontSize: 18.sp, color: Colors.white),
+                bodyLarge:
+                    GoogleFonts.mulish(fontSize: 16.sp, color: Colors.white),
+                bodyMedium:
+                    GoogleFonts.mulish(fontSize: 14.sp, color: Colors.white),
+              ),
+              useMaterial3: true,
+            ),
+            home: InfoScreen1(),
           ),
-          textTheme: TextTheme(
-            displayLarge: GoogleFonts.jost(fontSize: 24, color: Colors.white),
-            titleMedium: GoogleFonts.jost(fontSize: 18, color: Colors.white),
-            bodyLarge: GoogleFonts.mulish(fontSize: 16, color: Colors.white),
-            bodyMedium: GoogleFonts.mulish(fontSize: 14, color: Colors.white),
-            // Define more styles as needed
-          ),
-          useMaterial3: true,
-        ),
-        home: SignInScreen(),
-      ),
+        );
+      },
     );
   }
 }

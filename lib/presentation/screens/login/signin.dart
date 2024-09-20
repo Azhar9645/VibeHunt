@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibehunt/presentation/screens/base/base_screen.dart';
-import 'package:vibehunt/presentation/screens/home/home_screen.dart';
+import 'package:vibehunt/presentation/screens/login/forget%20password/forget_password.dart';
+import 'package:vibehunt/presentation/screens/login/signup.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:vibehunt/presentation/widgets/custom_buttons.dart';
 import 'package:vibehunt/presentation/widgets/custom_snackbar.dart';
 import 'package:vibehunt/utils/constants.dart';
-import 'package:vibehunt/presentation/screens/login/signup.dart';
 import 'package:vibehunt/presentation/widgets/main_button.dart';
 import 'package:vibehunt/presentation/widgets/textfield.dart';
 
@@ -19,8 +20,6 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
-
     return Scaffold(
       body: BlocConsumer<SignInBloc, SignInState>(
         listener: (context, state) {
@@ -39,33 +38,37 @@ class SignInScreen extends StatelessWidget {
         },
         builder: (context, state) {
           return Padding(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(18.w), // Responsive padding
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
                 autovalidateMode: AutovalidateMode.always,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 70),
+                    SizedBox(height: 70.h), // Responsive spacing
                     Image.asset(
                       'assets/logo/vibehunt logo.png',
-                      width: 500,
+                      width: 400.w, // Responsive image width
                     ),
-                    const SizedBox(height: 20),
-                    const Align(
+                    SizedBox(height: 20.h),
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Getting Started.!',
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w500),
+                          fontSize: 22.sp, // Responsive font size
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     MyTextfield(
                       controller: emailController,
                       hintText: 'abc@email.com',
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        size: 24.sp, // Responsive icon size
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Email is required';
@@ -78,13 +81,17 @@ class SignInScreen extends StatelessWidget {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+
+                    SizedBox(height: 20.h),
                     MyTextfield(
                       controller: passwordController,
                       hintText: 'Your password',
                       obscureText: true,
                       maxline: 1,
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIcon: Icon(
+                        Icons.lock_outline,
+                        size: 24.sp, // Responsive icon size
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password is required';
@@ -98,13 +105,27 @@ class SignInScreen extends StatelessWidget {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ForgetPasswordScreen(),
+                                  ));
+                            },
+                            child: const Text('Forgot password?',
+                                style: TextStyle(color: kGreen))),
+                      ],
+                    ),
                     BlocBuilder<SignInBloc, SignInState>(
                       builder: (context, state) {
                         if (state is SignInLoadingState) {
                           return loadingButton(
-                            media: media,
-                            onPressed: () {},
+                            onPressed: () {}, // Disable during loading
                             color: kGreen,
                           );
                         }
@@ -124,12 +145,13 @@ class SignInScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: 30.h),
                     Text(
                       'Or Continue with',
-                      style: jStyleW,
+                      style: jStyleW.copyWith(
+                          fontSize: 14.sp), // Responsive font size
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     Center(
                       child: BlocBuilder<SignInBloc, SignInState>(
                         builder: (context, state) {
@@ -143,8 +165,8 @@ class SignInScreen extends StatelessWidget {
                                   .add(OnGoogleSignInButtonClickedEvent());
                             },
                             child: Container(
-                              width: 55,
-                              height: 55,
+                              width: 55.w, // Responsive size
+                              height: 55.w, // Responsive size
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
@@ -152,6 +174,8 @@ class SignInScreen extends StatelessWidget {
                               child: ClipOval(
                                 child: Image.asset(
                                   'assets/google.png',
+                                  width: 55.w,
+                                  height: 55.w,
                                 ),
                               ),
                             ),
@@ -159,13 +183,16 @@ class SignInScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Dont have any account?',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        Text(
+                          'Don\'t have any account?',
+                          style: TextStyle(
+                            fontSize: 16.sp, // Responsive font size
+                            color: Colors.white,
+                          ),
                         ),
                         TextButton(
                           onPressed: () {
@@ -175,10 +202,10 @@ class SignInScreen extends StatelessWidget {
                                   builder: (context) => SignUpScreen()),
                             );
                           },
-                          child: const Text(
+                          child: Text(
                             'Sign Up',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.sp, // Responsive font size
                               fontWeight: FontWeight.bold,
                               color: kGreen,
                             ),

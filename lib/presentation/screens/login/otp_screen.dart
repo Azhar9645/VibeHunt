@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibehunt/data/models/user_model.dart';
 import 'package:vibehunt/presentation/screens/login/signin.dart';
@@ -11,6 +9,7 @@ import 'package:vibehunt/presentation/widgets/custom_buttons.dart';
 import 'package:vibehunt/presentation/widgets/custom_snackbar.dart';
 import 'package:vibehunt/utils/constants.dart';
 import 'package:vibehunt/presentation/widgets/main_button.dart';
+import 'package:pinput/pinput.dart';
 
 class OTPScreen extends StatefulWidget {
   final UserModel user;
@@ -23,8 +22,7 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
-  final List<TextEditingController> otpController =
-      List.generate(4, (index) => TextEditingController());
+  final TextEditingController pinController = TextEditingController();
   late Timer timer;
   Timer? debounceTimer;
   int start = 60;
@@ -40,9 +38,7 @@ class _OTPScreenState extends State<OTPScreen> {
   void dispose() {
     timer.cancel();
     debounceTimer?.cancel();
-    for (var otp in otpController) {
-      otp.dispose();
-    }
+    pinController.dispose();
     super.dispose();
   }
 
@@ -75,21 +71,24 @@ class _OTPScreenState extends State<OTPScreen> {
     });
   }
 
-  bool validateOtp() {
-    for (var controller in otpController) {
-      if (controller.text.isEmpty ||
-          controller.text.length != 1 ||
-          !RegExp(r'^[0-9]$').hasMatch(controller.text)) {
-        return false;
-      }
-    }
-    return true;
+  bool validateOtp(String otp) {
+    return otp.length == 4 && RegExp(r'^[0-9]{4}$').hasMatch(otp);
   }
 
   @override
   Widget build(BuildContext context) {
     final signUpBloc = context.read<SignUpBloc>();
     var media = MediaQuery.of(context).size;
+
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: const TextStyle(fontSize: 22, color: Colors.white), // Text color set to white
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white), // Outline border color set to white
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -99,11 +98,8 @@ class _OTPScreenState extends State<OTPScreen> {
       body: BlocConsumer<OtpVerificationBloc, OtpVerificationState>(
         listener: (context, state) {
           if (state is OtpVerificationSuccesState) {
-            customSnackbar(
-                context, ' otp verfication succen', Colors.green, Icons.done);
-            for (var controller in otpController) {
-              controller.clear();
-            }
+            customSnackbar(context, 'OTP verification successful', Colors.green, Icons.done);
+            pinController.clear();
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => SignInScreen()),
               (Route<dynamic> route) => false,
@@ -127,79 +123,81 @@ class _OTPScreenState extends State<OTPScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(4, (index) {
-                      return SizedBox(
-                        width: 60,
-                        child: TextField(
-                          controller: otpController[index],
-                          keyboardType: TextInputType.number,
-                          maxLength: 1,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 24),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          decoration: InputDecoration(
-                            counterText: '',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Colors.grey),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Colors.black),
-                            ),
-                          ),
+                  Pinput(
+                    length: 4,
+                    controller: pinController,
+                    defaultPinTheme: defaultPinTheme,
+                    hapticFeedbackType: HapticFeedbackType.lightImpact,
+                    onCompleted: (pin) {
+                      debugPrint('onCompleted: $pin');
+                    },
+                    onChanged: (value) {
+                      debugPrint('onChanged: $value');
+                    },
+                    cursor: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 9),
+                          width: 24,
+                          height: 2,
+                          color: Colors.white, // Cursor color white
                         ),
-                      );
-                    }),
+                      ],
+                    ),
+                    focusedPinTheme: defaultPinTheme.copyWith(
+                      decoration: defaultPinTheme.decoration!.copyWith(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white), // Focused border color white
+                      ),
+                    ),
+                    submittedPinTheme: defaultPinTheme.copyWith(
+                      decoration: defaultPinTheme.decoration!.copyWith(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.white), // Submitted border color white
+                      ),
+                    ),
+                    errorPinTheme: defaultPinTheme.copyBorderWith(
+                      border: Border.all(color: Colors.redAccent),
+                    ),
                   ),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                        onPressed: () {
-                          reSendOtp(signUpBloc);
-                        },
-                        child: Text(
-                          'Resend OTP',
-                          style: j20G,
-                        )),
+                      onPressed: () {
+                        reSendOtp(signUpBloc);
+                      },
+                      child: Text(
+                        'Resend OTP',
+                        style: j20G,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   BlocBuilder<OtpVerificationBloc, OtpVerificationState>(
                     builder: (context, state) {
                       if (state is OtpVerificationLoadingState) {
-                        return loadingButton(
-                            media: media, onPressed: () {}, color: kGreen);
+                        return loadingButton(onPressed: () {}, color: kGreen);
                       }
                       return MyButton(
-                          text: 'Verify',
-                          onPressed: () async {
-                            if (validateOtp()) {
-                              String otp = otpController
-                                  .map((controller) => controller.text)
-                                  .join();
-                              debugPrint('Entered OTP: $otp');
-                              context.read<OtpVerificationBloc>().add(
-                                  OnOtpVerifyButtonClicked(
-                                      otp: otp, email: widget.email));
-
-                              for (var controller in otpController) {
-                                controller.clear();
-                              }
-                            } else {
-                              customSnackbar(
-                                  context,
-                                  'Please enter a valid 4-digit OTP',
-                                  Colors.red,
-                                  Icons.error);
-                            }
-                          });
+                        text: 'Verify',
+                        onPressed: () async {
+                          String otp = pinController.text;
+                          if (validateOtp(otp)) {
+                            debugPrint('Entered OTP: $otp');
+                            context.read<OtpVerificationBloc>().add(
+                                OnOtpVerifyButtonClicked(
+                                    otp: otp, email: widget.email));
+                            pinController.clear();
+                          } else {
+                            customSnackbar(
+                                context,
+                                'Please enter a valid 4-digit OTP',
+                                Colors.red,
+                                Icons.error);
+                          }
+                        },
+                      );
                     },
                   ),
                 ],

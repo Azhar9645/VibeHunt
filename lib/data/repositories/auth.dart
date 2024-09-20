@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:vibehunt/data/models/profile/post_user_model.dart';
 import 'package:vibehunt/data/models/user_model.dart';
 import 'package:vibehunt/utils/api_url.dart';
+import 'package:vibehunt/utils/funtions.dart';
 
 class AuthenticationRepo {
   static var client = http.Client();
@@ -69,6 +71,15 @@ class AuthenticationRepo {
       debugPrint(response.body);
       final responseBody = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        await setUserLoggedin(
+          token: responseBody['user']['token'],
+          userrole: responseBody['user']['role'],
+          userid: responseBody['user']['_id'],
+          userEmail: responseBody['user']['email'],
+          userName: responseBody['user']['userName'],
+          userprofile: responseBody['user']['profilePic'],
+        );
+
         debugPrint("Login successful: ${responseBody['user']}");
 
         return response;
@@ -92,7 +103,14 @@ class AuthenticationRepo {
           headers: {"Content-Type": 'application/json'});
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
-        // You can handle the response here if needed, but without setting user preferences
+        await setUserLoggedin(
+          token: responseBody['user']['token'],
+          userrole: responseBody['user']['role'],
+          userid: responseBody['user']['_id'],
+          userEmail: responseBody['user']['email'],
+          userName: responseBody['user']['userName'],
+          userprofile: responseBody['user']['profilePic'],
+        );
       }
       return response;
     } catch (e) {
@@ -100,4 +118,45 @@ class AuthenticationRepo {
     }
   }
 
+  static Future<Response?> resetPasswordSendOtp(String email) async {
+    try {
+      Response? response = await client.get(Uri.parse(
+          '${ApiEndpoints.baseUrl + ApiEndpoints.forgotPassword}$email'));
+      if (kDebugMode) {
+        print(response.body);
+      }
+
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<Response?> verifyOtpPasswordReset(
+      String email, String otp) async {
+    try {
+      var response = await client.get(Uri.parse(
+          '${ApiEndpoints.baseUrl + ApiEndpoints.forgetVerifyOtp}$email&otp=$otp'));
+      print(response.body);
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<Response?> updatePassword(String email, String password) async {
+    try {
+      var user = {'email': email, 'password': password};
+      var response = await client.patch(
+          Uri.parse(ApiEndpoints.baseUrl + ApiEndpoints.updatePassword),
+          body: jsonEncode(user),
+          headers: {"Content-Type": 'application/json'});
+          if(kDebugMode){
+            print(response.body);
+          }
+          return response;
+    } catch (e) {
+      return null;
+    }
+  }
 }

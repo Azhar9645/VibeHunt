@@ -55,7 +55,7 @@ class MyTextfield extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.black),
           ),
           hintText: hintText,
-          hintStyle: jStyleHint, // Hint text color
+          hintStyle: jStyleHint, 
           prefixIcon: prefixIcon,
         ),
         inputFormatters: isNumbered! ? [NumberedStepFormatter()] : null,
