@@ -1,178 +1,236 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_bloc_builder/multi_bloc_builder.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
 import 'package:vibehunt/data/models/profile/comment_model.dart';
 import 'package:vibehunt/presentation/screens/home/home_screen.dart';
+import 'package:vibehunt/presentation/screens/profile/components/confirmation_dialogue.dart';
 import 'package:vibehunt/presentation/screens/profile/profile_screen.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/create_comment/create_comment_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/delete_comment/delete_comment_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_all_comments_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 
 Future<dynamic> commentBottomSheet(
     BuildContext context, post, TextEditingController commentController,
-    {required GlobalKey<FormState> formkey,
+    {required GlobalKey<FormState> formKey,
     required List<Comment> comments,
     required String id}) {
   return showModalBottomSheet(
     context: context,
-    isScrollControlled: true,
+    backgroundColor:
+        kGrey, // Grey background color for the bottom sheet
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20), // Rounded top corners
+      ),
     ),
-    builder: (context) {
-      return GestureDetector(
-        onTap: () {
-          // Dismiss keyboard when tapping outside
-          FocusScope.of(context).unfocus();
-        },
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height *
-                0.8, // Restrict height to 80% of screen height
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-          child: Column(
-            children: [
-              // Title Bar with Divider
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Comments',
-                    textAlign: TextAlign.center,
-                    style: j24,
-                  ),
-                ],
+    isScrollControlled: true,
+    builder: (context) => DraggableScrollableSheet(
+      expand: false, // Prevent the sheet from expanding to full screen
+      initialChildSize:
+          0.7, // Initial size of the bottom sheet (60% of the screen height)
+      minChildSize:
+          0.3, // Minimum size of the bottom sheet (30% of the screen height)
+      maxChildSize:
+          0.7, // Maximum size of the bottom sheet (60% of the screen height)
+      builder: (context, scrollController) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        child: Column(
+          children: [
+            // Heading at the top of the modal
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                'Comments',
+                style: j24
               ),
-              const Divider(height: 1),
-
-              // Comments List
-              Expanded(
-                child: comments.isEmpty
-                    ? const Center(child: Text('No comments yet.'))
-                    : ListView.builder(
-                        itemCount: comments.length,
-                        itemBuilder: (context, index) {
-                          Comment comment = comments[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CircleAvatar(
-                                  radius: 18,
-                                  backgroundImage:
-                                      NetworkImage(comment.user.profilePic),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        comment.user.userName,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                          overflow: TextOverflow.ellipsis,
+            ),
+            // Divider below the heading
+            Divider(
+              color: Colors.grey[700],
+              thickness: 1,
+            ),
+            Expanded(
+              child: BlocBuilder<FetchAllCommentsBloc, FetchAllCommentsState>(
+                builder: (context, state) {
+                  if (state is FetchAllCommentsLoadingState) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is FetchAllCommentsSuccessState) {
+                    comments = state.comments;
+                    return comments.isEmpty
+                        ? const Center(
+                            child: Text('No comments yet.',
+                                style: TextStyle(color: Colors.white)))
+                        : ListView.builder(
+                            controller:
+                                scrollController, // Connect to DraggableScrollableSheet
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
+                              final comment = comments[index];
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 18,
+                                      backgroundImage:
+                                          NetworkImage(comment.user.profilePic),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            comment.user.userName,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            comment.content,
+                                            style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            timeago.format(comment.createdAt,
+                                                locale: 'en_short'),
+                                            style: const TextStyle(
+                                                fontSize: 12, color: kGreen),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (logginedUserId == comment.user.id)
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete_rounded,
+                                          color: kWhiteColor,
+                                          size: 22,
                                         ),
-                                      ),
-                                      Text(
-                                        comment.content,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Text(
-                                        timeago.format(comment.createdAt,
-                                            locale: 'en_short'),
-                                        style: const TextStyle(
-                                            fontSize: 12, color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
+                                        onPressed: () {
+                                          confirmationDialog(context,
+                                              title: 'Delete',
+                                              content:
+                                                  'Are you sure you want to delete this comment?',
+                                              onpressed: () {
+                                            Navigator.pop(context);
+                                            context.read<DeleteCommentBloc>().add(
+                                                DeleteCommentButtonClickEvent(
+                                                    commentId: comment.id));
+                                          });
+                                        },
+                                      )
+                                  ],
                                 ),
-                                const SizedBox(width: 10),
-                                if (logginedUserId == comment.user.id)
-                                  IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.grey),
-                                    onPressed: () {
-                                      // Handle comment deletion here
-                                    },
-                                  ),
-                              ],
-                            ),
+                              );
+                            },
                           );
-                        },
-                      ),
+                  } else if (state is FetchAllCommentsErrorState) {
+                    return const Center(
+                        child:
+                            Text('Error', style: TextStyle(color: Colors.red)));
+                  } else {
+                    return const Center(
+                        child: Text('No comments available.',
+                            style: TextStyle(color: Colors.white)));
+                  }
+                },
               ),
-
-              // Divider above the comment input field
-              const Divider(height: 1),
-
-              // Comment Input Field
-              Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: Form(
-                  key: formkey,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(logginedUserProfileImage),
-                        radius: 25,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
+            ),
+            const Divider(color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(logginedUserProfileImage),
+                    backgroundColor: kGrey,
+                    radius: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Form(
+                      key: formKey,
+                      child: MultiBlocListener(
+                        listeners: [
+                          BlocListener<DeleteCommentBloc, DeleteCommentState>(
+                            listener: (context, state) {
+                              if (state is DeleteCommentSuccesfulState) {
+                                context.read<FetchAllCommentsBloc>().add(
+                                    CommentsFetchEvent(
+                                        postId:
+                                            id)); // Re-fetch comments for the post
+                                comments.removeWhere(
+                                    (comment) => comment.id == state.commentId);
+                              }
+                            },
+                          ),
+                          BlocListener<CreateCommentBloc, CreateCommentState>(
+                            listener: (context, state) {
+                              if (state is CreateCommentSuccessState) {
+                                context.read<FetchAllCommentsBloc>().add(
+                                    CommentsFetchEvent(
+                                        postId:
+                                            id)); // Re-fetch comments after adding a new one
+                                commentController.clear();
+                              }
+                            },
+                          ),
+                        ],
                         child: TextFormField(
                           controller: commentController,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            hintText: 'Add a comment...',
+                            contentPadding: const EdgeInsets.all(8),
+                            hintText: 'Write a comment...',
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                            fillColor: Colors.grey[800],
+                            filled: true,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide.none,
                             ),
-                            filled: true,
-                            fillColor: kBlackColor,
                           ),
+                          style: const TextStyle(color: Colors.white),
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a comment';
+                            if (value!.isEmpty) {
+                              return 'Write a comment';
+                            } else {
+                              return null;
                             }
-                            return null;
                           },
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.send, color: kGreen),
-                        onPressed: () {
-                          if (formkey.currentState!.validate()) {
-                            // Handle posting the comment here
-                            Comment newComment = Comment(
-                              id: UniqueKey().toString(),
-                              content: commentController.text,
-                              createdAt: DateTime.now(),
-                              user: CommentUser(
-                                id: logginedUserId,
-                                userName: profileuserName,
-                                profilePic: logginedUserProfileImage,
-                              ),
-                            );
-                            comments.add(newComment);
-                            commentController.clear();
-                          }
-                        },
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  IconButton(
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        context.read<CreateCommentBloc>().add(
+                              CommentPostButtonClickEvent(
+                                  userName: profileuserName,
+                                  postId: id,
+                                  content: commentController.text),
+                            );
+                      }
+                    },
+                    icon: const Icon(Icons.send, color: Colors.blue),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    },
+      ),
+    ),
   );
 }

@@ -169,4 +169,39 @@ class UserRepo {
     }
   }
 
+  //get User connections(follower and following)
+  static Future getUserConnections({required String userId}) async {
+    try {
+      final token = await getUsertoken();
+      var response = client.get(
+          Uri.parse(
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.getUserConnections}/$userId'),
+          headers: {'Authorization': 'Bearer $token'});
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  //fetch user post by user id
+  static Future fetchUserPostsOther({required String userId}) async {
+    try {
+     
+      
+      var response = await client.get(Uri.parse(
+          '${ApiEndpoints.baseUrl}${ApiEndpoints.getPostByUserId}/$userId'));
+      if (kDebugMode) {
+        print(
+            '${ApiEndpoints.baseUrl}${ApiEndpoints.getPostByUserId}/$userId');
+      }
+      // debugPrint(response.statusCode.toString());
+      // debugPrint(response.body);
+      return response;
+    } catch (e) {
+      log(e.toString());
+      
+    }
+  }
+  
+
 }

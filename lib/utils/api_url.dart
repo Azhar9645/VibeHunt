@@ -13,17 +13,19 @@ class ApiEndpoints {
   static const String unfollowUser = '/users/unfollow';
   static const String getFollowing = '/users/fetch-following';
   static const String getFollowers = '/users/fetch-followers';
- 
+  static const String getUserConnections = '/users/get-count';
 
-
-  
   static const String getPostByUserId = '/posts/getuserpost';
   static const String addpostUrl = '/posts/addPost';
   static const String updatePost = '/posts/update-post';
   static const String editProfile = '/users/edit-profile';
   static const String deletePost = '/posts/delete-post';
   static const String getAllComments = '/posts/fetch-comments';
-
+  static const String allFollowingsPost = '/posts/allfollowingsPost';
+  static const String createCommentPost = '/posts/add-comment';
+  static const String deleteComments = '/posts/delete-comment';
+  static const String likePost = '/posts/like-post';
+  static const String unlikePost = '/posts/unlike-post';
 
 
   static const String forgotPassword = '/users/forgotPassword?email=';

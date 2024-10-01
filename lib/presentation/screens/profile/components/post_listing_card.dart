@@ -11,10 +11,11 @@ import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/
 import 'package:vibehunt/presentation/screens/profile/components/post_edit_screen.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostListingCard extends StatelessWidget {
   final List<MyPostModel> post;
-  final String? mainImage; // Nullable
+  final String? mainImage; // Nullable 1210rs 1780gas 696 ok
   final String? profileImage; // Nullable
   final String userName;
   final String postTime;
@@ -53,7 +54,7 @@ class PostListingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      key: Key(mainImage ?? ''), 
+      key: Key(mainImage ?? ''),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         extentRatio: 0.5,
@@ -162,10 +163,10 @@ class PostListingCard extends StatelessWidget {
                     children: [
                       Text(userName, style: j20),
                       Text(
-                        postTime,
+                        postTime, // Fallback if postTime is null
                         style: const TextStyle(
                           color: Colors.grey,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -179,7 +180,7 @@ class PostListingCard extends StatelessWidget {
                 child: Image.network(
                   mainImage ??
                       'https://via.placeholder.com/400', // Fallback image
-                  height: 400,
+                  height: 350,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -220,36 +221,11 @@ class PostListingCard extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      // Row(
-                      //   children: [
-                      //     IconButton(
-                      //       onPressed: () {},
-                      //       icon: const Icon(
-                      //         Icons.favorite_border,
-                      //       ),
-                      //       iconSize: 35,
-                      //     ),
-                      //     IconButton(
-                      //       onPressed: commentButtonPressed,
-                      //       icon: const Icon(
-                      //         Icons.mode_comment_outlined,
-                      //       ),
-                      //       iconSize: 35,
-                      //     ),
-                      //     IconButton(
-                      //       onPressed: () {},
-                      //       icon: const Icon(
-                      //         Icons.bookmark_border,
-                      //       ),
-                      //       iconSize: 35,
-                      //     ),
-                      //   ],
-                      // ),
                       Row(
                         children: [
                           CustomLikeButton(),
                           CustomCommentButton(
-                            onPressed:commentButtonPressed,
+                            onPressed: commentButtonPressed,
                           ),
                           CustomSaveButton(
                             isSaved: true,

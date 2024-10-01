@@ -4,6 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibehunt/data/models/sign_in_details.dart';
 import 'package:vibehunt/presentation/screens/profile/components/profile_header.dart';
 import 'package:vibehunt/presentation/screens/profile/components/profile_tab_views.dart';
+import 'package:vibehunt/presentation/screens/profile/follow_following_screen/followers_screen.dart';
+import 'package:vibehunt/presentation/screens/profile/follow_following_screen/following_screen.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followers_bloc/fetchfollowers_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followings_bloc/fetchfollowing_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_user_details_bloc/signin_user_details_bloc.dart';
 
@@ -39,6 +43,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     context.read<FetchMyPostBloc>().add(FetchAllMyPostsEvent());
     context.read<SigninUserDetailsBloc>().add(OnSigninUserDataFetchEvent());
+    context.read<FetchfollowersBloc>().add(OnfetchAllFollowersEvent());
+    context.read<FetchfollowingBloc>().add(OnFetchFollowingUsersEvent());
+
     super.initState();
   }
 
@@ -68,6 +75,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       coverImage: coverImageUrl,
                       userName: profileuserName,
                       bio: state.userModel.bio ?? '',
+                      onFollowersTap: () {
+                            if (context.read<FetchfollowersBloc>().state
+                                is FetchfollowersSuccessState) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) => FollowersScreen(
+                                    model: (context
+                                            .read<FetchfollowersBloc>()
+                                            .state as FetchfollowersSuccessState)
+                                        .followersModel,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          onFollowingTap: () {
+                            if (context.read<FetchfollowingBloc>().state
+                                is FetchfollowingSuccessState) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) => const FollowingScreen(),
+                                ),
+                              );
+                            }
+                          },
                     ),
                   ),
                 ),

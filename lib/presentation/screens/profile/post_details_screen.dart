@@ -14,6 +14,7 @@ import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_al
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 import 'package:vibehunt/utils/funtions.dart';
+import 'package:intl/intl.dart';
 
 class PostScreen extends StatefulWidget {
   final List<MyPostModel> posts;
@@ -30,7 +31,7 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-    TextEditingController commentController = TextEditingController();
+  TextEditingController commentController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   final List<Comment> _comments = [];
 
@@ -63,26 +64,45 @@ class _PostScreenState extends State<PostScreen> {
                   ScrollController(initialScrollOffset: widget.index * 700),
               itemBuilder: (context, index) {
                 final postItem = state.posts[index];
+
                 return PostListingCard(
-                  mainImage: postItem.image.toString(),
-                  profileImage: postItem.userId?.profilePic ?? '',
+                  mainImage:
+                      postItem.image?.toString() ?? '', // Ensure fallback value
+                  profileImage: postItem.userId?.profilePic ??
+                      '', // Fallback for null profilePic
                   post: state.posts,
-                  tags: postItem.tags ?? [],
-                  userName: postItem.userId?.userName.toString() ?? '',
-                  postTime: postItem.createdAt == postItem.editedTime
-                      ? formatDate(postItem.createdAt.toString())
-                      : ("${formatDate(postItem.editedTime.toString())} (Edited)"),
-                  description: postItem.description.toString(),
-                  likeCount: postItem.likes!.length.toString(),
-                  commentCount: '1', // need to add
-                  likeButtonPressed: () {},
-                  commentButtonPressed: () {
-                    
-                    commentBottomSheet(context, postItem, commentController,
-                        formkey: _formkey,
-                        comments: _comments,
-                        id: postItem.id.toString());
+                  tags: postItem.tags ?? [], // Handle null tags
+                  userName: postItem.userId?.userName?.toString() ??
+                      'Unknown User', // Fallback for null username
+
+                  // Handle null for createdAt and editedTime with proper checks
+                  postTime: postItem.createdAt != null
+                      ? (postItem.createdAt == postItem.editedTime
+                          ? formatDate(
+                              postItem.createdAt!) // Format DateTime to String
+                          : "${formatDate(postItem.editedTime ?? DateTime.now())} (Edited)")
+                      : 'Unknown Date',
+
+                  description: postItem.description?.toString() ??
+                      'No description available', // Fallback for null description
+                  likeCount: postItem.likes?.length?.toString() ??
+                      '0', // Fallback for null likes
+                  commentCount:
+                      '1', // Comment count, update dynamically if available
+
+                  likeButtonPressed: () {
+                    // Add functionality to like button if required
                   },
+
+                  commentButtonPressed: () {
+                    commentBottomSheet(
+                      context, postItem, commentController,
+                      formKey: _formkey,
+                      comments: _comments,
+                      id: postItem.id?.toString() ?? '', // Handle null id
+                    );
+                  },
+
                   index: index,
                 );
               },
@@ -95,5 +115,10 @@ class _PostScreenState extends State<PostScreen> {
         },
       ),
     );
+  }
+
+  String formatDate(DateTime date) {
+    // Use DateFormat to format DateTime into a readable string format
+    return DateFormat('yyyy-MM-dd HH:mm').format(date);
   }
 }

@@ -752,6 +752,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  multi_bloc_builder:
+    dependency: "direct main"
+    description:
+      name: multi_bloc_builder
+      sha256: "8d87001d5d9555816297f2cc1ea82de8420093567a5420b919f5369ffe35a062"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   nested:
     dependency: transitive
     description:

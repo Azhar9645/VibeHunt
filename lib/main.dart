@@ -6,16 +6,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vibehunt/firebase_options.dart';
 import 'package:vibehunt/presentation/screens/info/info1.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/create_comment/create_comment_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/delete_comment/delete_comment_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_all_comments_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_following_post/fetch_all_following_post_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followers_bloc/fetchfollowers_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followings_bloc/fetchfollowing_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_users_post/fetch_users_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/follow_unfollow_bloc/follow_unfollow_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/edit_user_profile/edit_user_profile_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_users_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/forget_password/forget_password_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/like_unlike/like_unlike_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/otp_verification/otp_verification_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/post_Upload/post_upload_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_user_details_bloc/signin_user_details_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_up_bloc/sign_up_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/user_connection_count/user_connection_count_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,7 +76,34 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) => FollowUnfollowBloc(),
-            )
+            ),
+            BlocProvider(
+              create: (context) => FetchfollowersBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FetchfollowingBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FetchAllFollowingPostBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FetchAllCommentsBloc(),
+            ),
+            BlocProvider(
+              create: (context) => CreateCommentBloc(),
+            ),
+            BlocProvider(
+              create: (context) => DeleteCommentBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FetchUsersPostBloc(),
+            ),
+            BlocProvider(
+              create: (context) => UserConnectionCountBloc(),
+            ),
+            BlocProvider(
+              create: (context) => LikeUnlikeBloc(),
+            ),
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,

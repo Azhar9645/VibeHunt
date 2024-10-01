@@ -120,6 +120,21 @@ class PostRepo {
   }
 }
 
+ //fetch followers post
+  static Future getAllFollowingPost({required int page}) async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.get(
+          Uri.parse(
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.allFollowingsPost}?page=$page&pageSize=5'),
+          headers: {'Authorization': 'Bearer $token'});
+
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
 //Get All comments
   static Future getAllComments({required String postId}) async {
     try {
@@ -130,6 +145,80 @@ class PostRepo {
           headers: {'Authorization': 'Bearer $token'});
       debugPrint(response.statusCode.toString());
 
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  //comment post
+  static Future commentPost(
+      {required String postId,
+      required String userName,
+      required String content}) async {
+    try {
+      final userId = await getUserId();
+      final token = await getUsertoken();
+      final comment = {
+        'userId': userId,
+        'userName': userName,
+        'postId': postId,
+        'content': content
+      };
+      var response = await client.post(
+          Uri.parse(
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.createCommentPost}/$postId'),
+          body: jsonEncode(comment),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json'
+          });
+      // final responseBody = jsonDecode(response.body);
+      debugPrint(response.statusCode.toString());
+      debugPrint(response.body);
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  //Delete comments
+  static Future deleteComment({required String commentId}) async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.delete(
+          Uri.parse(
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.deleteComments}/$commentId'),
+          headers: {'Authorization': 'Bearer $token'});
+      debugPrint(response.statusCode.toString());
+      debugPrint(response.body);
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+    //Like post
+  static Future likePost({required String postId}) async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.patch(
+          Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.likePost}/$postId'),
+          headers: {'Authorization': 'Bearer $token'});
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  //unlike post
+  static Future unlikePost({required String postId}) async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.patch(
+          Uri.parse(
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.unlikePost}/$postId'),
+          headers: {'Authorization': 'Bearer $token'});
       return response;
     } catch (e) {
       log(e.toString());

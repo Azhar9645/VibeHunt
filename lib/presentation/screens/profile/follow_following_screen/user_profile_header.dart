@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:vibehunt/presentation/screens/profile/components/edit_profile.dart';
-import 'package:vibehunt/presentation/screens/profile/components/profile_bottom_sheet.dart';
-import 'package:vibehunt/presentation/screens/profile/follow_following_screen/followers_screen.dart';
-import 'package:vibehunt/presentation/screens/profile/follow_following_screen/following_screen.dart';
+import 'package:vibehunt/data/models/user_profile_model.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followers_bloc/fetchfollowers_bloc.dart';
-import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followings_bloc/fetchfollowing_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/user_connection_count/user_connection_count_bloc.dart';
 import 'package:vibehunt/presentation/widgets/custom_outline_button.dart';
 import 'package:vibehunt/utils/constants.dart';
 
-class ProfileHeader extends StatelessWidget {
+class UserProfileHeader extends StatelessWidget {
   final String profileImage;
   final String coverImage;
   final String userName;
   final String bio;
+  final UserIdSearchModel user;
+  final VoidCallback onPostsTap;
   final VoidCallback onFollowersTap;
   final VoidCallback onFollowingTap;
 
-  const ProfileHeader({
+  const UserProfileHeader({
     super.key,
     required this.profileImage,
     required this.coverImage,
     required this.userName,
     required this.bio,
+    required this.onPostsTap,
     required this.onFollowersTap,
     required this.onFollowingTap,
+    required this.user,
   });
 
   @override
@@ -53,13 +54,13 @@ class ProfileHeader extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.menu, color: Colors.white, size: 35.sp),
                 onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return const ProfileOptionsBottomSheet();
-                    },
-                  );
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return const ProfileOptionsBottomSheet();
+                  //   },
+                  // );
                 },
               ),
             ),
@@ -102,17 +103,15 @@ class ProfileHeader extends StatelessWidget {
                 onTap: onFollowersTap,
                 child: Column(
                   children: [
-                    BlocBuilder<FetchfollowersBloc, FetchfollowersState>(
+                    BlocBuilder<UserConnectionCountBloc,
+                        UserConnectionCountState>(
                       builder: (context, state) {
-                        if (state is FetchfollowersLoadingState) {
+                        if (state is UserConnectionCountLoadingState) {
                           return const CircularProgressIndicator();
-                        } else if (state is FetchfollowersSuccessState) {
+                        } else if (state is UserConnectionCountSuccessState) {
                           return Column(
                             children: [
-                              Text(
-                                  state.followersModel.followers.length
-                                      .toString(),
-                                  style: j20),
+                              Text(state.followersCount.toString(), style: j20),
                               Text('Followers', style: jStyleW),
                             ],
                           );
@@ -135,19 +134,20 @@ class ProfileHeader extends StatelessWidget {
                 onTap: onFollowingTap,
                 child: Column(
                   children: [
-                    BlocBuilder<FetchfollowingBloc, FetchfollowingState>(
+                    BlocBuilder<UserConnectionCountBloc,
+                        UserConnectionCountState>(
                       builder: (context, state) {
-                        if (state is FetchfollowingLoadingState) {
+                        if (state is UserConnectionCountLoadingState) {
                           return const CircularProgressIndicator();
-                        } else if (state is FetchfollowingSuccessState) {
+                        } else if (state is UserConnectionCountSuccessState) {
                           return Column(
                             children: [
-                              Text(state.following.following.length.toString(),
+                              Text(state.followingsCount.toString(),
                                   style: j20),
                               Text('Following', style: jStyleW),
                             ],
                           );
-                        } else if (state is FetchfollowingErrorState) {
+                        } else if (state is UserConnectionCountErrorState) {
                           return Text('Error', style: j20);
                         } else {
                           return Text('0', style: j20);
@@ -168,18 +168,8 @@ class ProfileHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             CustomOutlineButton(
-              text: 'Edit Profile',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => ScreenEditProfile(
-                      cvImage: coverImage,
-                      prImage: profileImage,
-                    ),
-                  ),
-                );
-              },
+              text: 'follow',
+              onTap: () {},
             ),
             CustomOutlineButton(
               text: 'Message',
