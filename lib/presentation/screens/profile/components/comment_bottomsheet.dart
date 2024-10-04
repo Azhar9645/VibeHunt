@@ -19,35 +19,27 @@ Future<dynamic> commentBottomSheet(
     required String id}) {
   return showModalBottomSheet(
     context: context,
-    backgroundColor:
-        kGrey, // Grey background color for the bottom sheet
+    backgroundColor: kGrey,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
-        top: Radius.circular(20), // Rounded top corners
+        top: Radius.circular(20),
       ),
     ),
-    isScrollControlled: true,
+    isScrollControlled:
+        true, // Allow the bottom sheet to scroll when keyboard appears
     builder: (context) => DraggableScrollableSheet(
-      expand: false, // Prevent the sheet from expanding to full screen
-      initialChildSize:
-          0.7, // Initial size of the bottom sheet (60% of the screen height)
-      minChildSize:
-          0.3, // Minimum size of the bottom sheet (30% of the screen height)
-      maxChildSize:
-          0.7, // Maximum size of the bottom sheet (60% of the screen height)
+      expand: false,
+      initialChildSize: 0.7,
+      minChildSize: 0.3,
+      maxChildSize: 0.7,
       builder: (context, scrollController) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
         child: Column(
           children: [
-            // Heading at the top of the modal
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                'Comments',
-                style: j24
-              ),
+              child: Text('Comments', style: j24),
             ),
-            // Divider below the heading
             Divider(
               color: Colors.grey[700],
               thickness: 1,
@@ -64,8 +56,7 @@ Future<dynamic> commentBottomSheet(
                             child: Text('No comments yet.',
                                 style: TextStyle(color: Colors.white)))
                         : ListView.builder(
-                            controller:
-                                scrollController, // Connect to DraggableScrollableSheet
+                            controller: scrollController,
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
                               final comment = comments[index];
@@ -149,7 +140,11 @@ Future<dynamic> commentBottomSheet(
             ),
             const Divider(color: Colors.white),
             Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context)
+                    .viewInsets
+                    .bottom, // Adjust padding when keyboard opens
+              ),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -166,10 +161,9 @@ Future<dynamic> commentBottomSheet(
                           BlocListener<DeleteCommentBloc, DeleteCommentState>(
                             listener: (context, state) {
                               if (state is DeleteCommentSuccesfulState) {
-                                context.read<FetchAllCommentsBloc>().add(
-                                    CommentsFetchEvent(
-                                        postId:
-                                            id)); // Re-fetch comments for the post
+                                context
+                                    .read<FetchAllCommentsBloc>()
+                                    .add(CommentsFetchEvent(postId: id));
                                 comments.removeWhere(
                                     (comment) => comment.id == state.commentId);
                               }
@@ -178,10 +172,9 @@ Future<dynamic> commentBottomSheet(
                           BlocListener<CreateCommentBloc, CreateCommentState>(
                             listener: (context, state) {
                               if (state is CreateCommentSuccessState) {
-                                context.read<FetchAllCommentsBloc>().add(
-                                    CommentsFetchEvent(
-                                        postId:
-                                            id)); // Re-fetch comments after adding a new one
+                                context
+                                    .read<FetchAllCommentsBloc>()
+                                    .add(CommentsFetchEvent(postId: id));
                                 commentController.clear();
                               }
                             },

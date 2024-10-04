@@ -12,6 +12,7 @@ import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_al
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_following_post/fetch_all_following_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followers_bloc/fetchfollowers_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followings_bloc/fetchfollowing_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_saved_post/fetch_saved_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_users_post/fetch_users_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/follow_unfollow_bloc/follow_unfollow_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/edit_user_profile/edit_user_profile_bloc.dart';
@@ -21,6 +22,7 @@ import 'package:vibehunt/presentation/viewmodel/bloc/forget_password/forget_pass
 import 'package:vibehunt/presentation/viewmodel/bloc/like_unlike/like_unlike_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/otp_verification/otp_verification_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/post_Upload/post_upload_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/save_post/save_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_user_details_bloc/signin_user_details_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_up_bloc/sign_up_bloc.dart';
@@ -103,6 +105,12 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) => LikeUnlikeBloc(),
+            ),
+            BlocProvider(
+              create: (context) => SavePostBloc(),
+            ),
+            BlocProvider(
+              create: (context) => FetchSavedPostBloc(),
             ),
           ],
           child: MaterialApp(

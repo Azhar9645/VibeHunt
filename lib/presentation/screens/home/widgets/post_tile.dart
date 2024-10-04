@@ -5,28 +5,31 @@ import 'package:vibehunt/data/models/following_post_model.dart';
 import 'package:vibehunt/data/models/profile/comment_model.dart';
 import 'package:vibehunt/data/models/profile/following_user_model.dart';
 import 'package:vibehunt/data/models/profile/post_user_model.dart';
+import 'package:vibehunt/data/models/saved_post_model.dart';
 import 'package:vibehunt/presentation/screens/profile/components/comment_bottomsheet.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_comment_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_like_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_save_buttom.dart';
 import 'package:vibehunt/presentation/screens/profile/profile_screen.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_all_comments_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_saved_post/fetch_saved_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/like_unlike/like_unlike_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/save_post/save_post_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-Widget buildPostTile({
-  required BuildContext context,
-  required FollowingPostModel model,
-  required TextEditingController commentController,
-  required GlobalKey<FormState> formKey,
-  required List<Comment> comments,
-  required VoidCallback onCommentTap, // Adding the onCommentTap callback
-}) {
+Widget buildPostTile(
+    {required BuildContext context,
+    required FollowingPostModel model,
+    required TextEditingController commentController,
+    required GlobalKey<FormState> formKey,
+    required List<Comment> comments,
+    required VoidCallback onCommentTap,
+    required List<SavedPostModel> savedposts}) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Card(
-      color: Colors.grey[850], // Adjust background color
+      color: kGrey,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -132,8 +135,15 @@ Widget buildPostTile({
                 MultiBlocBuilder(
                     blocs: [
                       context.watch<LikeUnlikeBloc>(),
+                      context.watch<FetchSavedPostBloc>(),
+                      context.watch<SavePostBloc>(),
                     ],
                     builder: (context, state) {
+                      var state2 = state[1];
+                      if (state2 is FetchSavedPostSuccessState) {
+                        savedposts = state2.posts;
+                      }
+
                       return Column(
                         children: [
                           Row(
@@ -199,12 +209,49 @@ Widget buildPostTile({
                                 color: kGreen,
                               ),
                               IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.bookmark_border,
+                                onPressed: () {
+                                  if (savedposts.any((element) =>
+                                      element.postId.id == model.id)) {
+                                    context.read<SavePostBloc>().add(
+                                        UnSaveButtonClickedEvent(
+                                            postId: model.id.toString()));
+                                    savedposts.removeWhere((element) =>
+                                        element.postId.id == model.id);
+                                  } else {
+                                    savedposts.add(SavedPostModel(
+                                        userId: model.userId.id.toString(),
+                                        postId: PostId(
+                                            id: model.id.toString(),
+                                            userId: UserIdSavedPost.fromJson(
+                                                model.userId.toJson()),
+                                            image: model.image.toString(),
+                                            description:
+                                                model.description.toString(),
+                                            likes: model.likes,
+                                            hidden: model.hidden,
+                                            blocked: model.blocked,
+                                            tags: model.tags,
+                                            date: model.date,
+                                            createdAt: model.createdAt,
+                                            updatedAt: model.updatedAt,
+                                            v: model.v,
+                                            taggedUsers: model.taggedUsers),
+                                        createdAt: DateTime.now(),
+                                        updatedAt: DateTime.now(),
+                                        v: model.v));
+                                    context.read<SavePostBloc>().add(
+                                        SaveButtonClickedEvent(
+                                            postId: model.id.toString()));
+                                  }
+                                },
+                                icon: Icon(
+                                  savedposts.any((element) =>
+                                          element.postId.id == model.id)
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_border,
+                                  color: kGreen,
+                                  size: 35,
                                 ),
-                                iconSize: 35,
-                                color: kGreen,
                               ),
                             ],
                           ),

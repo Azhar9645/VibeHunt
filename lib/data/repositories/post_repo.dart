@@ -225,5 +225,45 @@ class PostRepo {
     }
   }
 
+  //save post
+  static Future savePost({required String postId}) async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.post(
+          Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.savePost}/$postId'),
+          headers: {'Authorization': 'Bearer $token'});
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+// remove saved post
+  static Future unSavedPost({required String postId}) async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.delete(
+          Uri.parse(
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.unSavedPost}/$postId'),
+          headers: {'Authorization': 'Bearer $token'});
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  // get saved posts
+  static Future fetchSavedPosts() async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.get(
+          Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.fetchSavedPost}'),
+          headers: {'Authorization': 'Bearer $token'});
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   
 }

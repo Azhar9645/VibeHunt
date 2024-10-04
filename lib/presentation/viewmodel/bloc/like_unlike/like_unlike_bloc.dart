@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:meta/meta.dart';
 import 'package:vibehunt/data/repositories/post_repo.dart';
 
 part 'like_unlike_event.dart';
@@ -13,11 +12,11 @@ class LikeUnlikeBloc extends Bloc<LikeUnlikeEvent, LikeUnlikeState> {
   LikeUnlikeBloc() : super(LikeUnlikeInitial()) {
     on<LikeUnlikeEvent>((event, emit) {});
 
-     on<LikeButtonClickEvent>(likePostButtonClickEvent);
-    on<UnlikeButtonClickEvent>(unlikePostButtonClickEvent);
+     on<LikeButtonClickEvent>(likeButtonClickEvent);
+    on<UnlikeButtonClickEvent>(unlikeButtonClickEvent);
   }
 
-  Future<void> likePostButtonClickEvent(
+  Future<void> likeButtonClickEvent(
       LikeButtonClickEvent event, Emitter<LikeUnlikeState> emit) async {
     emit(LikeLoadingState());
     final Response result = await PostRepo.likePost(postId: event.postId);
@@ -35,7 +34,7 @@ class LikeUnlikeBloc extends Bloc<LikeUnlikeEvent, LikeUnlikeState> {
     }
   }
 
-  Future<void> unlikePostButtonClickEvent(
+  Future<void> unlikeButtonClickEvent(
       UnlikeButtonClickEvent event, Emitter<LikeUnlikeState> emit) async {
     emit(UnlikeLoadingState());
     final Response result = await PostRepo.unlikePost(postId: event.postId);

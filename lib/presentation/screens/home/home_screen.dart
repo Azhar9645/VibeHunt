@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:vibehunt/data/models/all_user_model.dart';
 import 'package:vibehunt/data/models/following_post_model.dart';
 import 'package:vibehunt/data/models/profile/comment_model.dart';
+import 'package:vibehunt/data/models/saved_post_model.dart';
 import 'package:vibehunt/presentation/screens/home/header_section.dart';
 import 'package:vibehunt/presentation/screens/home/see_all_user.dart';
 import 'package:vibehunt/presentation/screens/home/story_section.dart';
@@ -36,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController commentControllers = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final List<Comment> _comments = [];
+  List<SavedPostModel> savedposts = [];
   final ScrollController _scrollController = ScrollController();
   List<FollowingPostModel> _posts = [];
   bool _isLoadingMore = false;
@@ -53,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .add(OnFetchAllUserEvent(page: 1, limit: 10));
     context.read<SigninUserDetailsBloc>().add(OnSigninUserDataFetchEvent());
     context.read<FetchAllFollowingPostBloc>().add(
-        AllFollowingsPostsInitialFetchEvent()); // Fetch all posts from all users
+        AllFollowingsPostsInitialFetchEvent()); 
     getToken();
   }
 
@@ -161,6 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
           commentController: commentControllers,
           formKey: _formKey,
           comments: _comments,
+          savedposts:savedposts,
           onCommentTap: () {
             context
                 .read<FetchAllCommentsBloc>()

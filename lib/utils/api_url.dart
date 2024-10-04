@@ -15,6 +15,7 @@ class ApiEndpoints {
   static const String getFollowers = '/users/fetch-followers';
   static const String getUserConnections = '/users/get-count';
 
+  //post Urls
   static const String getPostByUserId = '/posts/getuserpost';
   static const String addpostUrl = '/posts/addPost';
   static const String updatePost = '/posts/update-post';
@@ -26,8 +27,11 @@ class ApiEndpoints {
   static const String deleteComments = '/posts/delete-comment';
   static const String likePost = '/posts/like-post';
   static const String unlikePost = '/posts/unlike-post';
+  static const String savePost = '/posts/savePost';
+  static const String unSavedPost = '/posts/savePosts';
+  static const String fetchSavedPost = '/posts/savePosts';
 
-
+  //reset Urls
   static const String forgotPassword = '/users/forgotPassword?email=';
   static const String forgetVerifyOtp = '/users/verifyOtp?email=';
   static const String updatePassword = '/users/changepassword';

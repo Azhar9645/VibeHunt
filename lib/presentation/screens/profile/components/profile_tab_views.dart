@@ -5,6 +5,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:vibehunt/presentation/screens/profile/post_details_screen.dart';
 import 'package:vibehunt/presentation/screens/rive_screen.dart/rive_loading.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_saved_post/fetch_saved_post_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/save_post/save_post_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 
 class ProfileTabViews extends StatelessWidget {
@@ -48,6 +50,8 @@ class _TabBarAndTabViewsState extends State<TabBarAndTabViews>
     super.initState();
     _tabController = TabController(length: tabPairs.length, vsync: this);
     context.read<FetchMyPostBloc>().add(FetchAllMyPostsEvent());
+    context.read<FetchSavedPostBloc>().add(SavedPostsInitialFetchEvent());
+  
   }
 
   @override
@@ -107,7 +111,7 @@ final List<TabPair> tabPairs = [
   ),
   TabPair(
     tab: const Tab(text: 'Saved'),
-    view: _buildListView(),
+    view: const _SavedTabView(),
   ),
 ];
 
@@ -160,19 +164,6 @@ class _UploadTabView extends StatelessWidget {
                           );
                         }
                       },
-                      // onTap: () {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => PostScreen(
-                      //         index: index, // Pass the index of the tapped post
-                      //         posts: (context.read<FetchMyPostBloc>().state
-                      //                 as FetchMyPostSuccessState)
-                      //             .posts, // Pass the entire list of posts
-                      //       ),
-                      //     ),
-                      //   );
-                      // },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(
@@ -212,17 +203,75 @@ class _UploadTabView extends StatelessWidget {
   }
 }
 
-Widget _buildListView() {
-  return ListView.builder(
-    itemCount: 10,
-    itemBuilder: (context, index) {
-      return Container(
-        margin: EdgeInsets.symmetric(vertical: 8.h),
-        color: kOrange,
-        child: ListTile(
-          title: Text('Saved $index', style: jStyleW),
-        ),
-      );
-    },
-  );
+class _SavedTabView extends StatelessWidget {
+  const _SavedTabView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FetchSavedPostBloc, FetchSavedPostState>(
+      builder: (context, state) {
+        if (state is FetchSavedPostSuccessState) {
+          if (state.posts.isEmpty) {
+            return const Center(child: Text('No posts available'));
+          }
+
+          return MasonryGridView.builder(
+            physics:
+                const NeverScrollableScrollPhysics(), // Disable GridView scrolling
+            shrinkWrap: true,
+            gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+            ),
+            itemCount: state.posts.length, // Display only the single saved post
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {},
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(
+                          state.posts[index].postId.image,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey,
+                              height: 200,
+                              width: double.infinity,
+                              child: const Center(
+                                child: Icon(
+                                  Icons.error,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4.0),
+                  ],
+                ),
+              );
+            },
+          );
+        } else if (state is FetchSavedPostSuccessState) {
+          return const Center(child: Text('Post unsaved successfully'));
+        } else if (state is FetchSavedPostErrorState ||
+            state is FetchSavedPostErrorState) {
+          return Center(
+            child: const Text('Failed to load posts'),
+          );
+        } else if (state is FetchSavedPostServerError ||
+            state is FetchSavedPostServerError) {
+          return const Center(child: Text('Server error occurred'));
+        } else {
+          return const Center(child: Text('No posts found'));
+        }
+      },
+    );
+  }
 }

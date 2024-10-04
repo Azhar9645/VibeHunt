@@ -14,10 +14,10 @@ class BaseScreen extends StatelessWidget {
   BaseScreen({super.key});
 
   final List<Widget> pages = [
-    HomeScreen(),
+    const HomeScreen(),
     ExploreScreen(),
     ChatListScreen(),
-    ProfileScreen(),
+    const ProfileScreen(),
   ];
 
   @override

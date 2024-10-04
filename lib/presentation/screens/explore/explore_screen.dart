@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:vibehunt/presentation/screens/explore/components/secondary_search_field.dart';
 
 class ExploreScreen extends StatefulWidget {
   @override
@@ -68,17 +69,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   },
                 ),
               ),
-              Positioned(
+              const Positioned(
                 top: 40,
                 left: 16,
                 right: 16,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 0.0, vertical: 0.0),
-                  child: CupertinoSearchTextField(
-                    backgroundColor: Colors.white.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                  child: SecondarySearchField(), // Replaced CupertinoSearchTextField with SecondarySearchField
                 ),
               ),
             ],
