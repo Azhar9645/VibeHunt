@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vibehunt/presentation/screens/message/messaging_screen.dart';
 import 'package:vibehunt/utils/constants.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -72,12 +71,12 @@ class ChatListScreen extends StatelessWidget {
     return InkWell(
       onTap: () {
         // Navigate to the MessageScreen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MessagingScreen(),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => MessagingScreen(),
+        //   ),
+        // );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
