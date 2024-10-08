@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:vibehunt/presentation/screens/explore/components/secondary_search_field.dart';
 import 'package:vibehunt/utils/constants.dart';
 
-class ChatListScreen extends StatelessWidget {
+class ChatListScreen extends StatefulWidget {
   ChatListScreen({super.key});
+
+  @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+  final searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -10,12 +18,25 @@ class ChatListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Message',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: j24,
         ),
       ),
+      
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: SecondarySearchField(
+              controller: searchController,
+              onTextChanged: (String value) {
+                if (value.isNotEmpty) {}
+              },
+              onTap: () {
+                setState(() {});
+              },
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: 10, // Number of chats
@@ -34,29 +55,6 @@ class ChatListScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF1C1C1E),
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.white,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble),
-            label: 'Messages',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.call),
-            label: 'Calls',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
     );
   }
 
@@ -69,15 +67,7 @@ class ChatListScreen extends StatelessWidget {
     required bool isUnread,
   }) {
     return InkWell(
-      onTap: () {
-        // Navigate to the MessageScreen
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => MessagingScreen(),
-        //   ),
-        // );
-      },
+      onTap: () {},
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -132,7 +122,7 @@ class ChatListScreen extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.red,
+                      color: kGreen,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(

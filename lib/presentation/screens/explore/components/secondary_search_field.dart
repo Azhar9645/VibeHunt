@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:vibehunt/utils/constants.dart'; // Ensure that `kGreen` and `kGrey` are defined here.
 
 class SecondarySearchField extends StatefulWidget {
-  const SecondarySearchField({Key? key}) : super(key: key);
+  final TextEditingController controller;
+  final ValueChanged<String> onTextChanged; // Callback for text changes
+  final VoidCallback onTap; // Callback for field tap
+
+  const SecondarySearchField({
+    Key? key,
+    required this.controller,
+    required this.onTextChanged,
+    required this.onTap, // This is now required
+  }) : super(key: key);
 
   @override
   _SecondarySearchFieldState createState() => _SecondarySearchFieldState();
@@ -37,11 +46,12 @@ class _SecondarySearchFieldState extends State<SecondarySearchField> {
     return PrimaryContainer(
       radius: 10,
       child: TextField(
-        onChanged: (value) {},
+        onChanged: widget.onTextChanged, // Pass text changes to the callback
         style: const TextStyle(fontSize: 16, color: Colors.white),
         textAlignVertical: TextAlignVertical.center,
-        controller: TextEditingController(),
+        controller: widget.controller, // Use the provided controller
         focusNode: _focusNode,
+        onTap: widget.onTap, // Invoke the onTap callback when field is tapped
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(left: 20, right: 20, bottom: 3),
           border: InputBorder.none,
@@ -56,10 +66,9 @@ class _SecondarySearchFieldState extends State<SecondarySearchField> {
               ),
             ),
             child: IconButton(
-              icon: const Icon(Icons.search,
-                  color: Colors.white), // Search button icon
+              icon: const Icon(Icons.search, color: Colors.white), // Search button icon
               onPressed: () {
-                // Add search logic here
+                // Search button action can be defined here if needed.
               },
             ),
           ),
