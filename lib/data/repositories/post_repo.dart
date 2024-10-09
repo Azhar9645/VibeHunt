@@ -266,4 +266,18 @@ class PostRepo {
   }
 
   
+  //fetch explore post
+  static Future fetchExplorePosts() async {
+    try {
+      final token = await getUsertoken();
+      var response = await client.get(
+          Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.explorePosts}'),
+          headers: {'Authorization': 'Bearer $token'});
+      return response;
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  
 }

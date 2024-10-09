@@ -8,6 +8,7 @@ import 'package:vibehunt/firebase_options.dart';
 import 'package:vibehunt/presentation/screens/info/info1.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/create_comment/create_comment_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/delete_comment/delete_comment_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/explore_post/explore_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_all_comments_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_following_post/fetch_all_following_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followers_bloc/fetchfollowers_bloc.dart';
@@ -19,10 +20,12 @@ import 'package:vibehunt/presentation/viewmodel/bloc/edit_user_profile/edit_user
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_users_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/forget_password/forget_password_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/get_all_conversation.dart/get_all_conversation_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/like_unlike/like_unlike_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/otp_verification/otp_verification_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/post_Upload/post_upload_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/save_post/save_post_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/search_all_users/search_all_users_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_user_details_bloc/signin_user_details_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_up_bloc/sign_up_bloc.dart';
@@ -112,6 +115,16 @@ class MyApp extends StatelessWidget {
             BlocProvider(
               create: (context) => FetchSavedPostBloc(),
             ),
+            BlocProvider(
+              create: (context) => SearchAllUsersBloc(),
+            ),
+            BlocProvider(
+              create: (context) => ExplorePostBloc(),
+            ),
+            BlocProvider(
+              create: (context) => GetAllConversationBloc(),
+            ),
+            
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,

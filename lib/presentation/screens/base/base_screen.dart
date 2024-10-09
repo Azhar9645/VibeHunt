@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:vibehunt/presentation/screens/add_post/post_create_screen.dart';
 import 'package:vibehunt/presentation/screens/add_post/bottom_sheet.dart';
 import 'package:vibehunt/presentation/screens/explore/explore_screen.dart';
 import 'package:vibehunt/presentation/screens/home/home_screen.dart';
-import 'package:vibehunt/presentation/screens/message/chat_list_screen.dart';
+import 'package:vibehunt/presentation/screens/chat/chat_list_screen.dart';
 import 'package:vibehunt/presentation/screens/profile/profile_screen.dart';
 import 'package:vibehunt/utils/constants.dart';
 
 final ValueNotifier<int> currentPage = ValueNotifier(0);
 
 class BaseScreen extends StatelessWidget {
-  
   BaseScreen({super.key});
 
   final List<Widget> pages = [
@@ -22,6 +20,9 @@ class BaseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if the keyboard is open by using MediaQuery's viewInsets
+    bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return Scaffold(
       extendBody: true,
       body: ValueListenableBuilder<int>(
@@ -76,13 +77,16 @@ class BaseScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showCustomBottomSheet(context); 
-        },
-        backgroundColor: kGreen,
-        child: const Icon(Icons.add, size: 36),
-      ),
+      // Hide or show FAB based on keyboard visibility
+      floatingActionButton: isKeyboardVisible
+          ? null // Hide FAB when keyboard is visible
+          : FloatingActionButton(
+              onPressed: () {
+                showCustomBottomSheet(context);
+              },
+              backgroundColor: kGreen,
+              child: const Icon(Icons.add, size: 36),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

@@ -13,7 +13,9 @@ class ApiEndpoints {
   static const String unfollowUser = '/users/unfollow';
   static const String getFollowing = '/users/fetch-following';
   static const String getFollowers = '/users/fetch-followers';
+  static const String getSingleUser = '/users/get-single-user';
   static const String getUserConnections = '/users/get-count';
+  static const String searchAllUsers = '/users/searchallusers?searchQuery=';
 
   //post Urls
   static const String getPostByUserId = '/posts/getuserpost';
@@ -30,9 +32,16 @@ class ApiEndpoints {
   static const String savePost = '/posts/savePost';
   static const String unSavedPost = '/posts/savePosts';
   static const String fetchSavedPost = '/posts/savePosts';
+  static const String explorePosts = '/posts/exploreposts';
 
   //reset Urls
   static const String forgotPassword = '/users/forgotPassword?email=';
   static const String forgetVerifyOtp = '/users/verifyOtp?email=';
   static const String updatePassword = '/users/changepassword';
+
+  //chat urls
+  static const String createConversation = '/chats/conversation';
+  static const String getAllConversations = '/chats/conversation';
+  static const String addMessage = '/chats/message';
+  static const String getAllMessages = '/chats/message';
 }

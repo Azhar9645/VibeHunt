@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibehunt/presentation/screens/explore/components/secondary_search_field.dart';
+import 'package:vibehunt/presentation/screens/explore/debouncer/debouncer.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/search_all_users/search_all_users_bloc.dart';
 
 class ExploreScreen extends StatefulWidget {
   @override
@@ -9,17 +11,16 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
+  final searchController = TextEditingController();
+  final _debouncer = Debouncer(milliseconds: 700);
   PageController _pageController = PageController();
   int _currentPage = 0;
   Timer? _timer;
+  bool isSearching = false;
 
   final List<String> images = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcaNJcoE9hJ20j1K8H7Ml6872NyPN5zaJjQ&s',
-    'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmF0dXJlfGVufDB8fDB8fHwy',
-    'https://images.unsplash.com/photo-1615729947596-a598e5de0ab3?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fG5hdHVyZXxlbnwwfHwwfHx8Mg%3D%3D',
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=2948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1540206395-68808572332f?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzV8fG5hdHVyZXxlbnwwfHwwfHx8Mg%3D%3D',
-    'https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzZ8fG5hdHVyZXxlbnwwfHwwfHx8Mg%3D%3D',
+    // Other image URLs...
   ];
 
   @override
@@ -44,6 +45,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   void dispose() {
     _timer?.cancel();
     _pageController.dispose();
+    searchController.dispose(); // Dispose of the controller
     super.dispose();
   }
 
@@ -55,8 +57,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
           Stack(
             children: [
               // Image Slider
-              Container(
-                height: 400, // Adjust the height as needed
+              SizedBox(
+                height: 400,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: images.length,
@@ -69,39 +71,91 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   },
                 ),
               ),
-              const Positioned(
+              // Search Field
+              Positioned(
                 top: 40,
                 left: 16,
-                right: 16,
+                right: isSearching ? 60 : 16,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-                  child: SecondarySearchField(), // Replaced CupertinoSearchTextField with SecondarySearchField
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                  child: SecondarySearchField(
+                    controller: searchController,
+                    onTextChanged: (String value) {
+                      if (value.isNotEmpty) {
+                        _debouncer.run(() {
+                          context
+                              .read<SearchAllUsersBloc>()
+                              .add(OnSearchAllUsersEvent(query: value));
+                        });
+                      }
+                    },
+                    onTap: () {
+                      setState(() {
+                        isSearching = true;
+                      });
+                    },
+                  ),
                 ),
               ),
+              // Close Button
+              if (isSearching)
+                Positioned(
+                  top: 40,
+                  right: 16,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        isSearching = false;
+                        searchController.clear();
+                      });
+                    },
+                  ),
+                ),
             ],
           ),
-          const SizedBox(height: 30), // Add some spacing
+          const SizedBox(height: 30),
+          // Use BlocBuilder to listen for state changes
           Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildThumbnailCard(
-                  'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmF0dXJlfGVufDB8fDB8fHwy',
-                ),
-                _buildThumbnailCard(
-                  'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmF0dXJlfGVufDB8fDB8fHwy',
-                ),
-                _buildThumbnailCard(
-                  'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmF0dXJlfGVufDB8fDB8fHwy',
-                ),
-                _buildThumbnailCard(
-                  'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmF0dXJlfGVufDB8fDB8fHwy',
-                ),
-              ],
-            ),
+            child: isSearching
+                ? BlocBuilder<SearchAllUsersBloc, SearchAllUsersState>(
+                    builder: (context, state) {
+                      if (state is SearchAllUsersLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is SearchAllUsersSuccessState) {
+                        final users = state.users;
+                        return ListView.builder(
+                          itemCount: users.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(users[index]
+                                        .profilePic ??
+                                    'https://randomuser.me/api/portraits/men/1.jpg'), // Replace with user profile picture
+                              ),
+                              title: Text(users[index].name ??
+                                  'No Name'), // Replace with user name property
+                            );
+                          },
+                        );
+                      } else if (state is SearchAllUsersErrorState) {
+                        return Center(child: Text('Error loading users'));
+                      }
+                      return Center(child: Text('Search for users...'));
+                    },
+                  )
+                : buildDefaultView(),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildDefaultView() {
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children:
+          images.map((imageUrl) => _buildThumbnailCard(imageUrl)).toList(),
     );
   }
 

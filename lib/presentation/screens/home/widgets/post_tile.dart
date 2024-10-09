@@ -51,8 +51,8 @@ Widget buildPostTile(
                     child: Image.network(
                       model.userId.profilePic ??
                           'https://via.placeholder.com/150', // Fallback profile image
-                      width: 50,
-                      height: 50,
+                      width: 60,
+                      height: 60,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Image.asset('assets/default_profile.png');

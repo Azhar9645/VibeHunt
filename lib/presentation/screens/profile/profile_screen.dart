@@ -78,30 +78,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       userName: profileuserName,
                       bio: state.userModel.bio ?? '',
                       onFollowersTap: () {
-                            if (context.read<FetchfollowersBloc>().state
-                                is FetchfollowersSuccessState) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (ctx) => FollowersScreen(
-                                    model: (context
-                                            .read<FetchfollowersBloc>()
-                                            .state as FetchfollowersSuccessState)
-                                        .followersModel,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          onFollowingTap: () {
-                            if (context.read<FetchfollowingBloc>().state
-                                is FetchfollowingSuccessState) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (ctx) => const FollowingScreen(),
-                                ),
-                              );
-                            }
-                          },
+                        if (context.read<FetchfollowersBloc>().state
+                            is FetchfollowersSuccessState) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => FollowersScreen(),
+                            ),
+                          );
+                        }
+                      },
+                      onFollowingTap: () {
+                        if (context.read<FetchfollowingBloc>().state
+                            is FetchfollowingSuccessState) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => const ScreenFollowing(),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ),

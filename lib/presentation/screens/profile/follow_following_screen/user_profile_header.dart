@@ -16,6 +16,7 @@ class UserProfileHeader extends StatelessWidget {
   final VoidCallback onPostsTap;
   final VoidCallback onFollowersTap;
   final VoidCallback onFollowingTap;
+  final bool isFollowing; // Add this parameter
 
   const UserProfileHeader({
     super.key,
@@ -27,6 +28,7 @@ class UserProfileHeader extends StatelessWidget {
     required this.onFollowersTap,
     required this.onFollowingTap,
     required this.user,
+    required this.isFollowing, // Update constructor
   });
 
   @override
@@ -168,7 +170,7 @@ class UserProfileHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             CustomOutlineButton(
-              text: 'follow',
+              text: isFollowing ? 'Unfollow' : 'Follow',
               onTap: () {},
             ),
             CustomOutlineButton(
