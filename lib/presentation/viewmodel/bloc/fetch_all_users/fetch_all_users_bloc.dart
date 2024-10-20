@@ -9,6 +9,7 @@ part 'fetch_all_users_event.dart';
 part 'fetch_all_users_state.dart';
 
 class FetchAllUsersBloc extends Bloc<FetchAllUsersEvent, FetchAllUsersState> {
+  
   FetchAllUsersBloc() : super(FetchAllUsersInitial()) {
     on<OnFetchAllUserEvent>((event, emit) async {
       emit(FetchAllUsersLoadingState());

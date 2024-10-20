@@ -80,7 +80,7 @@ class _SecondarySearchFieldState extends State<SecondarySearchField> {
           disabledBorder: InputBorder.none,
           enabledBorder: InputBorder.none,
           hintText: 'Search',
-          hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
+          hintStyle: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),
     );

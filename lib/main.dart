@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vibehunt/firebase_options.dart';
+import 'package:vibehunt/data/services/firebase/firebase_options.dart';
 import 'package:vibehunt/presentation/screens/info/info1.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/add_message/add_message_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/conversation_bloc/conversation_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/create_comment/create_comment_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/delete_comment/delete_comment_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/explore_post/explore_post_bloc.dart';
@@ -21,6 +23,7 @@ import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_u
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/forget_password/forget_password_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/get_all_conversation.dart/get_all_conversation_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/get_all_users/get_all_users_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/like_unlike/like_unlike_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/otp_verification/otp_verification_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/post_Upload/post_upload_bloc.dart';
@@ -124,6 +127,15 @@ class MyApp extends StatelessWidget {
             BlocProvider(
               create: (context) => GetAllConversationBloc(),
             ),
+            BlocProvider(
+              create: (context) => GetAllUsersBloc(),
+            ),
+            BlocProvider(
+              create: (context) => AddMessageBloc(),
+            ),
+            BlocProvider(
+              create: (context) => ConversationBloc(),
+            ),
             
           ],
           child: MaterialApp(
@@ -161,4 +173,7 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }

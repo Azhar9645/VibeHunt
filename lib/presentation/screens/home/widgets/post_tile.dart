@@ -6,7 +6,7 @@ import 'package:vibehunt/data/models/profile/comment_model.dart';
 import 'package:vibehunt/data/models/profile/following_user_model.dart';
 import 'package:vibehunt/data/models/profile/post_user_model.dart';
 import 'package:vibehunt/data/models/saved_post_model.dart';
-import 'package:vibehunt/presentation/screens/profile/components/comment_bottomsheet.dart';
+import 'package:vibehunt/presentation/screens/profile/components/bottomsheets/comment_bottomsheet.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_comment_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_like_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_save_buttom.dart';
@@ -26,113 +26,145 @@ Widget buildPostTile(
     required List<Comment> comments,
     required VoidCallback onCommentTap,
     required List<SavedPostModel> savedposts}) {
+  final currentUserId = userdetails.id;
+
   return Padding(
     padding: const EdgeInsets.all(8.0),
-    child: Card(
-      color: kGrey,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User Profile and Name
-            Row(
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green, width: 2.0),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      model.userId.profilePic ??
-                          'https://via.placeholder.com/150', // Fallback profile image
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset('assets/default_profile.png');
-                      },
+    child: GestureDetector(
+      onDoubleTap: () {
+        final isLiked = model.likes.any((user) => user.id == currentUserId);
+        if (!isLiked) {
+          model.likes.add(FollowingUserIdModel.fromJson(User(
+                  id: userdetails.id,
+                  userName: userdetails.userName,
+                  email: userdetails.email,
+                  profilePic: userdetails.profilePic,
+                  phone: userdetails.phone,
+                  online: userdetails.online,
+                  blocked: userdetails.blocked,
+                  verified: userdetails.verified,
+                  createdAt: userdetails.createdAt,
+                  updatedAt: userdetails.updatedAt,
+                  v: 1,
+                  role: userdetails.role,
+                  backGroundImage: userdetails.backGroundImage,
+                  isPrivate: userdetails.isPrivate)
+              .toJson()));
+          context
+              .read<LikeUnlikeBloc>()
+              .add(LikeButtonClickEvent(postId: model.id.toString()));
+        } else {
+          model.likes.removeWhere((user) => user.id == currentUserId);
+          context
+              .read<LikeUnlikeBloc>()
+              .add(UnlikeButtonClickEvent(postId: model.id.toString()));
+        }
+      },
+      child: Card(
+        color: kGrey,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // User Profile and Name
+              Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green, width: 2.0),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        model.userId.profilePic ??
+                            'https://via.placeholder.com/150',
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset('assets/default_profile.png');
+                        },
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      model.userId.userName ?? 'Unknown user',
-                      style: const TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                    Text(
-                      model.createdAt != null
-                          ? timeago.format(model
-                              .createdAt) // Converts DateTime to "x time ago"
-                          : 'Unknown time', // Fallback if createdAt is null
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // Post Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(
-                model.image ??
-                    'https://via.placeholder.com/400', // Fallback post image
-                height: 350,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey,
-                    height: 250,
-                    child: const Center(
-                        child: Icon(Icons.error, color: Colors.red)),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Post Description and Tags
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
+                  const SizedBox(width: 10),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        model.description ?? 'No description available',
+                        model.userId.userName ?? 'Unknown user',
                         style:
-                            const TextStyle(fontSize: 14, color: Colors.white),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                            const TextStyle(fontSize: 16, color: Colors.white),
                       ),
-                      const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: model.tags
-                            .map((tag) => Text(
-                                  '#${tag.toString()}',
-                                  style: const TextStyle(
-                                    color: kGreen,
-                                    fontSize: 16,
-                                  ),
-                                ))
-                            .toList(),
+                      Text(
+                        model.createdAt != null
+                            ? timeago.format(model.createdAt)
+                            : 'Unknown time',
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ],
                   ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              // Post Image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(
+                  model.image ?? 'https://via.placeholder.com/400',
+                  height: 350,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey,
+                      height: 250,
+                      child: const Center(
+                          child: Icon(Icons.error, color: Colors.red)),
+                    );
+                  },
                 ),
-                // Post Buttons (Like, Comment, Save)
-                MultiBlocBuilder(
+              ),
+              const SizedBox(height: 10),
+              // Post Description and Tags
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          model.description ?? 'No description available',
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.white),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 4.0,
+                          children: model.tags
+                              .map((tag) => Text(
+                                    '#${tag.toString()}',
+                                    style: const TextStyle(
+                                      color: kGreen,
+                                      fontSize: 16,
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Post Buttons (Like, Comment, Save)
+                  MultiBlocBuilder(
                     blocs: [
                       context.watch<LikeUnlikeBloc>(),
                       context.watch<FetchSavedPostBloc>(),
@@ -150,7 +182,6 @@ Widget buildPostTile(
                             children: [
                               IconButton(
                                 onPressed: () {
-                                  final currentUserId = userdetails.id;
                                   final isLiked = model.likes
                                       .any((user) => user.id == currentUserId);
                                   if (!isLiked) {
@@ -176,7 +207,6 @@ Widget buildPostTile(
                                                 isPrivate:
                                                     userdetails.isPrivate)
                                             .toJson()));
-
                                     context.read<LikeUnlikeBloc>().add(
                                         LikeButtonClickEvent(
                                             postId: model.id.toString()));
@@ -272,10 +302,12 @@ Widget buildPostTile(
                           ),
                         ],
                       );
-                    }),
-              ],
-            ),
-          ],
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ),

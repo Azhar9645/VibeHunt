@@ -11,7 +11,7 @@ import 'package:vibehunt/presentation/screens/home/story_section.dart';
 import 'package:vibehunt/presentation/screens/home/widgets/Shimmer_user_avatars.dart';
 import 'package:vibehunt/presentation/screens/home/widgets/post_tile.dart';
 import 'package:vibehunt/presentation/screens/home/widgets/shimmer_post_tile.dart';
-import 'package:vibehunt/presentation/screens/profile/components/comment_bottomsheet.dart';
+import 'package:vibehunt/presentation/screens/profile/components/bottomsheets/comment_bottomsheet.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_comment_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_like_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_save_buttom.dart';
@@ -122,8 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           } else if (state is FetchAllFollowingPostSuccess) {
             // Handle successful fetching of all followers' posts
-            _posts = state.posts; // Assuming _posts is a class-level variable
-            _isLoadingMore = false; // Manage loading state
+            _posts = state.posts; 
+            _isLoadingMore = false; 
             return _buildPostsListView(_posts);
           } else if (state is FetchMorePostSuccessState) {
             // Handle loading more posts

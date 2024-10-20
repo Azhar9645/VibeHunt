@@ -1,8 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibehunt/data/models/all_user_model.dart';
-import 'package:vibehunt/presentation/screens/home/widgets/Shimmer_user_avatars.dart';
 import 'package:vibehunt/presentation/screens/home/see_all_user.dart';
+import 'package:vibehunt/presentation/screens/home/widgets/Shimmer_user_avatars.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_users_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 
@@ -23,6 +25,8 @@ Widget buildSeeAllAndStorySection(BuildContext context) {
 }
 
 Widget buildUsersList(BuildContext context, List<AllUser> users) {
+  
+  
   return Column(
     children: [
       buildSeeAllButton(context, users),
@@ -76,8 +80,8 @@ Widget buildUserAvatars(List<AllUser> users) {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Image.network(users[index].profilePic,
-                      fit: BoxFit.cover),
+                  child:
+                      Image.network(users[index].profilePic, fit: BoxFit.cover),
                 ),
               ),
               const SizedBox(height: 2),

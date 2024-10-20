@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibehunt/data/models/user_profile_model.dart';
+import 'package:vibehunt/presentation/screens/chat/chat_screen.dart';
+import 'package:vibehunt/presentation/screens/home/home_screen.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/conversation_bloc/conversation_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followers_bloc/fetchfollowers_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/get_all_conversation.dart/get_all_conversation_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/user_connection_count/user_connection_count_bloc.dart';
 import 'package:vibehunt/presentation/widgets/custom_outline_button.dart';
 import 'package:vibehunt/utils/constants.dart';
@@ -173,9 +177,34 @@ class UserProfileHeader extends StatelessWidget {
               text: isFollowing ? 'Unfollow' : 'Follow',
               onTap: () {},
             ),
-            CustomOutlineButton(
-              text: 'Message',
-              onTap: () {},
+            BlocConsumer<ConversationBloc, ConversationState>(
+              listener: (context, state) {
+                if (state is ConversationSuccesfulState) {
+                  context
+                      .read<GetAllConversationBloc>()
+                      .add(AllConversationsInitialFetchEvent());
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+                            conversationId: state.conversationId,
+                            recieverid: user.id,
+                            name: user.userName,
+                            profilepic: user.profilePic,
+                            username: user.userName),
+                      ));
+                }
+              },
+              builder: (context, state) {
+                return CustomOutlineButton(
+                  text: 'Message',
+                  onTap: () {
+                    context.read<ConversationBloc>().add(
+                        CreateConversationButtonClickEvent(
+                            members: [logginedUserId, user.id]));
+                  },
+                );
+              },
             )
           ],
         ),

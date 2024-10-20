@@ -25,7 +25,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       );
 
       Response? response = await AuthenticationRepo().sentOtp(finalDatas);
-      if (response != null && response.statusCode == 200) {
+      if (response != null && response.statusCode == 200) { 
         return emit(SignUpSuccesState());
       } else if (response != null) {
         if (response.body != null && response.body.isNotEmpty) {

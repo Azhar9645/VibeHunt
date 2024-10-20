@@ -1,6 +1,8 @@
 class ApiEndpoints {
   // BaseURL
   static const String baseUrl = 'https://zdm5p3m3-7002.inc1.devtunnels.ms/api';
+    // static const String baseUrl = 'https://api.azhar11.online';
+
 
   // UserUrl
   static const String signUp = '/users/send-otp';
@@ -16,6 +18,7 @@ class ApiEndpoints {
   static const String getSingleUser = '/users/get-single-user';
   static const String getUserConnections = '/users/get-count';
   static const String searchAllUsers = '/users/searchallusers?searchQuery=';
+  static const String getAllUsers = '/users/getAllUsers';
 
   //post Urls
   static const String getPostByUserId = '/posts/getuserpost';

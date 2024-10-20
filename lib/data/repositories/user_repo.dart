@@ -113,19 +113,25 @@ class UserRepo {
     }
   }
 
-  //fetchAll user
-  // static Future<Response?> fetchAllUser() async {
-  //   try {
-  //     final token = await getUsertoken();
-  //     var response = client.get(
-  //         Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.allUsers}'),
-  //         headers: {'Authorization': 'Bearer $token'});
-  //     return response;
-  //   } catch (e) {
-  //     log(e.toString());
-  //     return null;
-  //   }
-  // }
+  //get all users
+  static Future<http.Response> getAllUsers() async {
+    final Uri url = Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.getAllUsers}');
+    
+    try {
+      final response = await client.get(url);
+      
+      if (response.statusCode == 200) {
+        // Successfully fetched users
+        return response;
+      } else {
+        // Handle other status codes
+        throw Exception('Failed to fetch allUsers: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error occurred: $error');
+    }
+  }
+
   static Future<Response?> fetchAllUser(int page, int limit) async {
   try {
     final token = await getUsertoken();

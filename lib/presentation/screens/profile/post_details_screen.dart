@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meta/meta.dart';
 import 'package:vibehunt/data/models/my_post/my_post_model.dart';
 import 'package:vibehunt/data/models/profile/comment_model.dart';
-import 'package:vibehunt/presentation/screens/profile/components/comment_bottomsheet.dart';
+import 'package:vibehunt/presentation/screens/profile/components/bottomsheets/comment_bottomsheet.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_comment_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_like_button.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/custom_save_buttom.dart';
@@ -61,7 +61,7 @@ class _PostScreenState extends State<PostScreen> {
             }
             return ListView.builder(
               controller:
-                  ScrollController(initialScrollOffset: widget.index * 700),
+                  ScrollController(initialScrollOffset: widget.index * 500),
               itemBuilder: (context, index) {
                 final postItem = state.posts[index];
 

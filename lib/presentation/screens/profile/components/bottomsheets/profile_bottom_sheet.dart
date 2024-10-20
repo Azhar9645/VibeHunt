@@ -4,8 +4,9 @@ import 'package:vibehunt/presentation/screens/base/base_screen.dart';
 import 'package:vibehunt/presentation/screens/login/signin.dart';
 import 'package:vibehunt/presentation/screens/profile/components/confirmation_dialog.dart';
 import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/logoutConfirmationDialog.dart';
-import 'package:vibehunt/presentation/screens/profile/components/settings_page.dart';
+import 'package:vibehunt/presentation/screens/profile/settings%20screen/settings_bottomsheet.dart';
 import 'package:vibehunt/presentation/screens/profile/components/showdialogue.dart';
+import 'package:vibehunt/utils/constants.dart';
 import 'package:vibehunt/utils/funtions.dart';
 
 class ProfileOptionsBottomSheet extends StatelessWidget {
@@ -24,34 +25,27 @@ class ProfileOptionsBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
+          Row(
             children: [
               Spacer(),
-              Text(
-                'Profile',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
+              Text('Profile', style: j24),
               Spacer(),
             ],
           ),
-          const SizedBox(height: 20),
-          // Edit Profile option
+          const SizedBox(height: 10),
+
+          // Settings Policy option
           ListTile(
-            title: const Text('Edit Profile',
-                style: TextStyle(color: Colors.white)),
-            onTap: () {
-              // Add your action for editing profile
-            },
-          ),
-          // Privacy Policy option
-          ListTile(
+            leading: const Icon(Icons.settings, color: kGreen),
             title:
                 const Text('Settings', style: TextStyle(color: Colors.white)),
             onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsBottomSheet(),
+                ),
+              );
               Navigator.pop(context);
               showModalBottomSheet(
                 context: context,
@@ -63,6 +57,7 @@ class ProfileOptionsBottomSheet extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.logout, color: kGreen),
             title: const Text('Logout', style: TextStyle(color: Colors.white)),
             onTap: () async {
               logoutConfirmationDialog(
@@ -72,7 +67,7 @@ class ProfileOptionsBottomSheet extends StatelessWidget {
                 confirmButtonText: "Yes",
                 cancelButtonText: "No",
                 onConfirm: () async {
-                  // Perform your logout operations here
+                  // 2663 rs Perform your logout operations here
                   await clearUserSession();
                   await googleSignOut();
 
@@ -90,7 +85,8 @@ class ProfileOptionsBottomSheet extends StatelessWidget {
                 },
               );
             },
-          )
+          ),
+          
         ],
       ),
     );

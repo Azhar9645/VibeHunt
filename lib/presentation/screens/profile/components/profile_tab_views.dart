@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:vibehunt/presentation/screens/profile/components/saved_post/saved_post_screen.dart';
 import 'package:vibehunt/presentation/screens/profile/post_details_screen.dart';
 import 'package:vibehunt/presentation/screens/rive_screen.dart/rive_loading.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_post_bloc/fetch_my_post_bloc.dart';
@@ -51,7 +52,6 @@ class _TabBarAndTabViewsState extends State<TabBarAndTabViews>
     _tabController = TabController(length: tabPairs.length, vsync: this);
     context.read<FetchMyPostBloc>().add(FetchAllMyPostsEvent());
     context.read<FetchSavedPostBloc>().add(SavedPostsInitialFetchEvent());
-  
   }
 
   @override
@@ -155,7 +155,7 @@ class _UploadTabView extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => PostScreen(
-                                index: 0,
+                                index: index,
                                 posts: (context.read<FetchMyPostBloc>().state
                                         as FetchMyPostSuccessState)
                                     .posts,
@@ -230,7 +230,15 @@ class _SavedTabView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SavedScreenPost(
+                                model: state.posts,
+                              ),
+                            ));
+                      },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(

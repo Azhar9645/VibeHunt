@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-// Define the UserModel class
 class UserModel {
   String id;
   String userName;
@@ -38,24 +37,51 @@ class UserModel {
     required this.updatedAt,
   });
 
+  // Static method to create an empty UserModel
+  static UserModel empty() {
+    return UserModel(
+      id: '',
+      userName: 'Unknown',
+      email: '',
+      password: '',
+      profilePic: '',
+      phone: null,
+      online: false,
+      blocked: false,
+      verified: false,
+      role: 'User',
+      isPrivate: false,
+      backGroundImage: '',
+      bio: null,
+      name: null,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
+
   // Factory method to create UserModel from JSON
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json['_id'],
-        userName: json['userName'],
-        email: json['email'],
-        password: json['password'],
-        profilePic: json['profilePic'],
-        phone: json['phone'] ?? '',
-        online: json['online'],
-        blocked: json['blocked'],
-        verified: json['verified'],
-        role: json['role'],
-        isPrivate: json['isPrivate'],
-        backGroundImage: json['backGroundImage'],
-        bio: json['bio'],
-        name: json['name'],
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
+        id: json['_id'] ?? '',
+        userName:
+            json['userName'] ?? 'Unknown', // Fallback to 'Unknown' if null
+        email: json['email'] ?? '',
+        password: json['password'] ?? '',
+        profilePic: json['profilePic'] ?? '',
+        phone: json['phone'], // Optional phone
+        online: json['online'] ?? false,
+        blocked: json['blocked'] ?? false,
+        verified: json['verified'] ?? false,
+        role: json['role'] ?? 'User',
+        isPrivate: json['isPrivate'] ?? false,
+        backGroundImage: json['backGroundImage'] ?? '',
+        bio: json['bio'], // Optional bio
+        name: json['name'], // Optional name
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : DateTime.now(), // Use current time if missing
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'])
+            : DateTime.now(),
       );
 
   // Method to convert UserModel to JSON
@@ -79,10 +105,9 @@ class UserModel {
       };
 }
 
-// Define the ExplorePostModel class
 class ExplorePostModel {
   String id;
-  UserModel userId; // User who created the post
+  UserModel userId;
   String image;
   String description;
   List<String> likes;
@@ -111,22 +136,36 @@ class ExplorePostModel {
     required this.v,
   });
 
-  // Factory method to create ExplorePostModel from JSON
+  // Factory method to create ExplorePostModel from JSON with null checks
   factory ExplorePostModel.fromJson(Map<String, dynamic> json) =>
       ExplorePostModel(
-        id: json['_id'],
-        userId: UserModel.fromJson(json['userId']),
-        image: json['image'],
-        description: json['description'] ?? '',
-        likes: List<String>.from(json['likes']),
-        hidden: json['hidden'],
-        blocked: json['blocked'],
-        tags: List<String>.from(json['tags']),
-        taggedUsers: List<String>.from(json['taggedUsers']),
-        date: DateTime.parse(json['date']),
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
-        v: json['__v'],
+        id: json['_id'] ?? '',
+        userId: json['userId'] != null
+            ? UserModel.fromJson(json['userId'])
+            : UserModel.empty(), // Handle null userId safely
+        image: json['image'] ?? '',
+        description: json['description'] ?? '', // Fallback to empty description
+        likes: json['likes'] != null
+            ? List<String>.from(json['likes'])
+            : [], // Fallback to empty list if null
+        hidden: json['hidden'] ?? false,
+        blocked: json['blocked'] ?? false,
+        tags: json['tags'] != null
+            ? List<String>.from(json['tags'])
+            : [], // Fallback to empty list
+        taggedUsers: json['taggedUsers'] != null
+            ? List<String>.from(json['taggedUsers'])
+            : [], // Fallback to empty list
+        date: json['date'] != null
+            ? DateTime.parse(json['date'])
+            : DateTime.now(), // Fallback to current time if missing
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : DateTime.now(),
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'])
+            : DateTime.now(),
+        v: json['__v'] ?? 0, // Default to 0 if missing
       );
 
   // Method to convert ExplorePostModel to JSON

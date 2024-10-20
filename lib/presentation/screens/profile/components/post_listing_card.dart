@@ -15,7 +15,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class PostListingCard extends StatelessWidget {
   final List<MyPostModel> post;
-  final String? mainImage; // Nullable 1210rs 1780gas 696 ok
+  final String? mainImage; // Nullable 
   final String? profileImage; // Nullable
   final String userName;
   final String postTime;

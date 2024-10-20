@@ -101,26 +101,26 @@ class PostRepo {
 
   //Delete Post
   static Future<Response?> deletePost(String postId) async {
-  try {
-    final token = await getUsertoken();
-    debugPrint("User token: $token");
-    debugPrint("Post ID to delete: $postId");
-    var response = await client.delete(
-        Uri.parse(
-            '${ApiEndpoints.baseUrl}${ApiEndpoints.deletePost}/$postId'),
-        headers: {'Authorization': 'Bearer $token'});
-    
-    debugPrint("Delete API Response Status: ${response.statusCode}");
-    debugPrint("Delete API Response Body: ${response.body}");
+    try {
+      final token = await getUsertoken();
+      debugPrint("User token: $token");
+      debugPrint("Post ID to delete: $postId");
+      var response = await client.delete(
+          Uri.parse(
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.deletePost}/$postId'),
+          headers: {'Authorization': 'Bearer $token'});
 
-    return response;
-  } catch (e) {
-    debugPrint("Error while deleting post: $e");
-    return null;
+      debugPrint("Delete API Response Status: ${response.statusCode}");
+      debugPrint("Delete API Response Body: ${response.body}");
+
+      return response;
+    } catch (e) {
+      debugPrint("Error while deleting post: $e");
+      return null;
+    }
   }
-}
 
- //fetch followers post
+  //fetch followers post
   static Future getAllFollowingPost({required int page}) async {
     try {
       final token = await getUsertoken();
@@ -198,7 +198,7 @@ class PostRepo {
     }
   }
 
-    //Like post
+  //Like post
   static Future likePost({required String postId}) async {
     try {
       final token = await getUsertoken();
@@ -265,7 +265,6 @@ class PostRepo {
     }
   }
 
-  
   //fetch explore post
   static Future fetchExplorePosts() async {
     try {
@@ -273,11 +272,12 @@ class PostRepo {
       var response = await client.get(
           Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.explorePosts}'),
           headers: {'Authorization': 'Bearer $token'});
+      debugPrint('Fetch Explore Posts Response: ${response.body}');
+      debugPrint('Response from API: ${response.body}');
       return response;
     } catch (e) {
-      log(e.toString());
+      debugPrint('Error in fetching posts: $e');
+      throw Exception('Failed to fetch posts');
     }
   }
-
-  
 }

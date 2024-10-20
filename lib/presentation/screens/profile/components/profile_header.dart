@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibehunt/presentation/screens/profile/components/edit_profile.dart';
-import 'package:vibehunt/presentation/screens/profile/components/profile_bottom_sheet.dart';
+import 'package:vibehunt/presentation/screens/profile/components/bottomsheets/profile_bottom_sheet.dart';
 import 'package:vibehunt/presentation/screens/profile/follow_following_screen/followers_screen.dart';
 import 'package:vibehunt/presentation/screens/profile/follow_following_screen/following_screen.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_followers_bloc/fetchfollowers_bloc.dart';
