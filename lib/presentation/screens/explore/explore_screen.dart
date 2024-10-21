@@ -5,6 +5,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vibehunt/presentation/screens/explore/components/secondary_search_field.dart';
 import 'package:vibehunt/presentation/screens/explore/debouncer/debouncer.dart';
 import 'package:vibehunt/presentation/screens/explore/screen_explore.dart';
+import 'package:vibehunt/presentation/screens/profile/follow_following_screen/user_profile_screen.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/explore_post/explore_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_following_post/fetch_all_following_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/get_all_users/get_all_users_bloc.dart';
@@ -23,6 +24,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   int _currentPage = 0;
   Timer? _timer;
   bool isSearching = false;
+  String onchangevalue = '';
 
   @override
   void initState() {
@@ -38,196 +40,208 @@ class _ExploreScreenState extends State<ExploreScreen> {
     super.dispose();
   }
 
-  void _startAutoSlideTimer(int postLength) {
-    _timer?.cancel(); // Ensure no multiple timers are running
+  // void _startAutoSlideTimer(int postLength) {
+  //   _timer?.cancel();
 
-    // Timer for auto-sliding the PageView
+  //   _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+  //     if (_currentPage < postLength - 1) {
+  //       _currentPage++;
+  //     } else {
+  //       _currentPage = 0;
+  //     }
+  //     _pageController.animateToPage(
+  //       _currentPage,
+  //       duration: const Duration(milliseconds: 350),
+  //       curve: Curves.easeIn,
+  //     );
+  //   });
+  // }
+  void _startAutoSlideTimer(int postLength) {
+    _timer?.cancel();
+
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < postLength - 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
+      if (_pageController.hasClients) {
+        // Check if the PageController has clients
+        if (_currentPage < postLength - 1) {
+          _currentPage++;
+        } else {
+          _currentPage = 0;
+        }
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeIn,
+        );
       }
-      _pageController.animateToPage(
-        _currentPage,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeIn,
-      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 400,
-                      child: isSearching
-                          ? _buildSearchResults()
-                          : BlocBuilder<ExplorePostBloc, ExplorePostState>(
-                              builder: (context, state) {
-                                if (state is ExplorePostLoadingState) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                } else if (state is ExplorePostSuccessState) {
-                                  if (state.posts.isNotEmpty) {
-                                    // Start the timer after posts are fetched successfully
-                                    _startAutoSlideTimer(state.posts.length);
-
-                                    return PageView.builder(
-                                      controller: _pageController,
-                                      itemCount: state.posts.length,
-                                      onPageChanged: (index) {
-                                        setState(() {
-                                          _currentPage = index;
-                                        });
-                                      },
-                                      itemBuilder: (context, index) {
-                                        return Image.network(
-                                          state.posts[index].image,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    return const Center(
-                                        child: Text('No images available.'));
-                                  }
-                                } else if (state is ExplorePostErrorState) {
-                                  return const Center(
-                                      child: Text('Failed to load images.'));
-                                }
-                                return const Center(
-                                    child: Text('No images available.'));
-                              },
-                            ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Dots Indicator below the slider
-                    BlocBuilder<ExplorePostBloc, ExplorePostState>(
-                      builder: (context, state) {
-                        if (state is ExplorePostSuccessState) {
-                          return SmoothPageIndicator(
-                            controller: _pageController, // PageController
-                            count: 6, // Use posts count
-                            effect: const ExpandingDotsEffect(
-                              activeDotColor: kGreen,
-                              dotColor: Colors.grey,
-                              dotHeight: 8,
-                              dotWidth: 8,
-                              spacing: 6,
-                            ),
-                          );
-                        }
-                        return const SizedBox
-                            .shrink(); // Hide the indicator if no posts
-                      },
-                    ),
-                  ],
-                ),
-                // Search Field
-                Positioned(
-                  top: 40,
-                  left: 16,
-                  right: isSearching ? 60 : 16,
-                  child: SecondarySearchField(
-                    controller: searchController,
-                    onTextChanged: (String value) {
-                      if (value.isNotEmpty) {
-                        _debouncer.run(() {
-                          context
-                              .read<SearchAllUsersBloc>()
-                              .add(OnSearchAllUsersEvent(query: value));
-                        });
-                      }
-                    },
-                    onTap: () {
-                      setState(() {
-                        isSearching = true;
-                      });
-                      context
-                          .read<GetAllUsersBloc>()
-                          .add(FetchGetAllUsersEvent());
-                    },
-                  ),
-                ),
-                // Positioned(
-                //   top: 200,
-                //   left: 16,
-                //   right: isSearching ? 60 : 16,
-                //   child: Text(
-                //     '"Creativity is intelligence having fun." \n- Albert Einstein',
-                //     style: TextStyle(
-                //       fontSize: 20,
-                //       fontWeight: FontWeight.bold,
-                //       color: Colors.white,
-                //       shadows: [
-                //         Shadow(
-                //           blurRadius: 10,
-                //           color: Colors.black.withOpacity(0.5),
-                //           offset: Offset(2, 2),
-                //         ),
-                //       ],
-                //     ),
-                //     textAlign: TextAlign.center,
-                //   ),
-                // ),
-
-                // Close Button
-                if (isSearching)
-                  Positioned(
-                    top: 40,
-                    right: 16,
-                    child: IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () {
-                        setState(() {
-                          isSearching = false;
-                          searchController.clear();
-                        });
-                        context
-                            .read<GetAllUsersBloc>()
-                            .add(FetchGetAllUsersEvent());
-                      },
-                    ),
-                  ),
-              ],
+      body: Stack(
+        children: [
+          isSearching ? _buildSearchResults() : _buildDefaultStack(context),
+          // Search Field (visible in both states)
+          Positioned(
+            top: 40,
+            left: 16,
+            right: isSearching ? 60 : 16,
+            child: SecondarySearchField(
+              controller: searchController,
+              onTextChanged: (String value) {
+                setState(() {
+                  isSearching = true; // Switch to searching mode immediately
+                  onchangevalue = value;
+                });
+                if (value.isNotEmpty) {
+                  _debouncer.run(() {
+                    context
+                        .read<SearchAllUsersBloc>()
+                        .add(OnSearchAllUsersEvent(query: value));
+                  });
+                } else {
+                  setState(() {
+                    isSearching =
+                        false; // If no input, return to non-search mode
+                  });
+                }
+              },
+              onTap: () {
+                setState(() {
+                  isSearching = true;
+                });
+                // context.read<GetAllUsersBloc>().add(FetchGetAllUsersEvent());
+              },
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'ideas from creators',
-              style: TextStyle(fontSize: 20),
+          ),
+          // Close Button (visible only when searching)
+          if (isSearching)
+            Positioned(
+              top: 40,
+              right: 16,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: kWhiteColor),
+                onPressed: () {
+                  setState(() {
+                    isSearching = false;
+                    searchController.clear();
+                  });
+                  context.read<GetAllUsersBloc>().add(FetchGetAllUsersEvent());
+                },
+              ),
             ),
-            const SizedBox(height: 5),
-            SizedBox(
-              height: 400,
-              child: isSearching ? _buildSearchResults() : buildDefaultView(),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
 
-  // Search Results ListView
+  Stack _buildDefaultStack(BuildContext context) {
+    return Stack(
+      children: [
+        // Image Slider
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: SizedBox(
+            height: 400,
+            child: BlocBuilder<ExplorePostBloc, ExplorePostState>(
+              builder: (context, state) {
+                if (state is ExplorePostLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is ExplorePostSuccessState) {
+                  if (state.posts.isNotEmpty) {
+                    _startAutoSlideTimer(state.posts.length);
+                    return PageView.builder(
+                      controller: _pageController,
+                      itemCount: state.posts.length,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return Image.network(
+                          state.posts[index].image,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(child: Text('No images available.'));
+                  }
+                } else if (state is ExplorePostErrorState) {
+                  return const Center(child: Text('Failed to load images.'));
+                }
+                return const Center(child: Text('No images available.'));
+              },
+            ),
+          ),
+        ),
+        // Dots Indicator
+        Positioned(
+          top: 415,
+          left: 0,
+          right: 0,
+          child: BlocBuilder<ExplorePostBloc, ExplorePostState>(
+            builder: (context, state) {
+              if (state is ExplorePostSuccessState) {
+                return Center(
+                  child: SmoothPageIndicator(
+                    controller: _pageController,
+                    count: 6,
+                    effect: const ExpandingDotsEffect(
+                      activeDotColor: kGreen,
+                      dotColor: Colors.grey,
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      spacing: 6,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+        // Text below the Dots Indicator
+        const Positioned(
+          top: 440,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Text(
+              'Ideas from creators',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+        // Thumbnail Cards below the Text
+        Positioned(
+          top: 475,
+          left: 0,
+          right: 0,
+          child: SizedBox(
+            height: 400,
+            child: buildDefaultView(),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSearchResults() {
-    return BlocBuilder<GetAllUsersBloc, GetAllUsersState>(
+    return BlocBuilder<SearchAllUsersBloc, SearchAllUsersState>(
       builder: (context, state) {
-        if (state is GetAllUsersLoadingState) {
+        if (state is SearchAllUsersLoadingState) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is GetAllUsersSuccessState) {
+        } else if (state is SearchAllUsersSuccessState) {
           final users = state.users;
           if (users.isEmpty) {
             return const Center(child: Text('No users found.'));
           }
-
           return ListView.builder(
             padding: const EdgeInsets.only(top: 100),
             itemCount: users.length,
@@ -237,11 +251,25 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 margin: const EdgeInsets.all(8),
                 child: ListTile(
                   leading: CircleAvatar(
+                    radius: 25,
                     backgroundImage: NetworkImage(user.profilePic ??
                         'https://randomuser.me/api/portraits/men/1.jpg'),
                   ),
-                  title: Text(user.name ?? 'No Name'),
-                  subtitle: Text(user.email ?? 'No Email'),
+                  title: Text(
+                    user.name ?? 'No Name',
+                    style: j20,
+                  ),
+                  subtitle:
+                      Text('_${user.name ?? 'User'}_${user.name ?? 'User'}_'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProfileScreen(
+                              userId: state.users[index].id.toString(),
+                              user: state.users[index]),
+                        ));
+                  },
                 ),
               );
             },
@@ -255,7 +283,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  // Default view when not searching: a list of thumbnail cards
   Widget buildDefaultView() {
     return BlocBuilder<FetchAllFollowingPostBloc, FetchAllFollowingPostState>(
       builder: (context, state) {
@@ -335,6 +362,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       radius: 33,
                       backgroundImage: NetworkImage(
                           profilePictureUrl ?? defaultProfilePictureUrl),
+                      backgroundColor: Colors.transparent,
                     ),
                   ),
                 ],

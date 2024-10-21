@@ -8,20 +8,25 @@ Widget buildHeader(BuildContext context) {
     builder: (context, state) {
       String userName = 'User'; // Default user name
       if (state is SigninUserDetailsDataFetchSuccesState) {
-        userName = ((state.userModel.name ?? state.userModel.userName))
-            .toUpperCase();
+        userName =
+            ((state.userModel.name ?? state.userModel.userName)).toUpperCase();
       }
 
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return Column(
         children: [
-          Text('Hi, $userName', style: j24),
-          IconButton(
-            icon: const Icon(Icons.notifications_active_outlined,
-                color: kWhiteColor, size: 35),
-            onPressed: () {
-              // Action for notification icon
-            },
+          SizedBox(height: 10,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Hi, $userName', style: j24),
+              // IconButton(
+              //   icon: const Icon(Icons.notifications_active_outlined,
+              //       color: kWhiteColor, size: 35),
+              //   onPressed: () {
+              //     // Action for notification icon
+              //   },
+              // ),
+            ],
           ),
         ],
       );

@@ -9,3 +9,5 @@ class OnFetchAllUserEvent extends FetchAllUsersEvent {
 
   OnFetchAllUserEvent({required this.page, required this.limit});
 }
+
+

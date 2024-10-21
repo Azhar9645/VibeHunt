@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_bloc_builder/multi_bloc_builder.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:vibehunt/data/models/profile/comment_model.dart';
 import 'package:vibehunt/presentation/screens/home/home_screen.dart';
+import 'package:vibehunt/presentation/screens/profile/components/bottomsheets/comment_shimmer.dart';
 import 'package:vibehunt/presentation/screens/profile/components/confirmation_dialogue.dart';
 import 'package:vibehunt/presentation/screens/profile/profile_screen.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/create_comment/create_comment_bloc.dart';
@@ -17,6 +19,20 @@ Future<dynamic> commentBottomSheet(
     {required GlobalKey<FormState> formKey,
     required List<Comment> comments,
     required String id}) {
+  // List of emojis to display
+  List<String> emojis = [
+    "😀",
+    "😂",
+    "😍",
+    "😢",
+    "😎",
+    "👍",
+    "👎",
+    "🎉",
+    "🔥",
+    "❤️"
+  ];
+
   return showModalBottomSheet(
     context: context,
     backgroundColor: kGrey,
@@ -25,8 +41,7 @@ Future<dynamic> commentBottomSheet(
         top: Radius.circular(20),
       ),
     ),
-    isScrollControlled:
-        true, // Allow the bottom sheet to scroll when keyboard appears
+    isScrollControlled: true,
     builder: (context) => DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.7,
@@ -48,7 +63,13 @@ Future<dynamic> commentBottomSheet(
               child: BlocBuilder<FetchAllCommentsBloc, FetchAllCommentsState>(
                 builder: (context, state) {
                   if (state is FetchAllCommentsLoadingState) {
-                    return const Center(child: CircularProgressIndicator());
+                    return ListView.builder(
+                      controller: scrollController,
+                      itemCount: 6,
+                      itemBuilder: (context, index) {
+                        return CommentShimmer();
+                      },
+                    );
                   } else if (state is FetchAllCommentsSuccessState) {
                     comments = state.comments;
                     return comments.isEmpty
@@ -139,11 +160,34 @@ Future<dynamic> commentBottomSheet(
               ),
             ),
             const Divider(color: Colors.white),
+            // Emoji row
+            SizedBox(
+              height: 40,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: emojis.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      // Append emoji to the comment field when tapped
+                      commentController.text += emojis[index];
+                      commentController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: commentController.text.length),
+                      );
+                    },
+                    child: Text(
+                      emojis[index],
+                      style: const TextStyle(fontSize: 25), // Emoji size
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 5),
             Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context)
-                    .viewInsets
-                    .bottom, // Adjust padding when keyboard opens
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
               child: Row(
                 children: [
@@ -216,11 +260,12 @@ Future<dynamic> commentBottomSheet(
                             );
                       }
                     },
-                    icon: const Icon(Icons.send, color: Colors.blue),
+                    icon: const Icon(Icons.send, color: kGreen),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 8),
           ],
         ),
       ),

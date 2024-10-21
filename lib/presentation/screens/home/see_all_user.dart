@@ -14,15 +14,15 @@ class SeeAllUsersPage extends StatefulWidget {
 }
 
 class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
-  late List<bool> isFollowingList; // To track follow status for each user
-  late List<AllUser> sortedUsers; // This will store the sorted users
+  late List<AllUser> sortedUsers;
+  late List<bool> isFollowingList;
 
   @override
   void initState() {
     super.initState();
-    // Initially set all users to "not following"
+    // Track follow/unfollow status for each user
     isFollowingList = List.generate(widget.users.length, (_) => false);
-    // Start with the original user list
+    // Sort users at the beginning
     sortedUsers = List.from(widget.users);
   }
 
@@ -31,9 +31,7 @@ class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
     sortedUsers.sort((a, b) {
       bool isAFollowed = isFollowingList[widget.users.indexOf(a)];
       bool isBFollowed = isFollowingList[widget.users.indexOf(b)];
-      return isAFollowed == isBFollowed
-          ? 0
-          : (isAFollowed ? 1 : -1); // Followed users move down
+      return isAFollowed == isBFollowed ? 0 : (isAFollowed ? 1 : -1);
     });
   }
 
@@ -41,10 +39,7 @@ class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Followed by',
-          style: j24,
-        ),
+        title: Text('All Users', style: j24),
       ),
       body: ListView.builder(
         itemCount: sortedUsers.length,
@@ -54,16 +49,15 @@ class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
             create: (context) => FollowUnfollowBloc(),
             child: BlocConsumer<FollowUnfollowBloc, FollowUnfollowState>(
               listener: (context, state) {
-                // Listen for follow/unfollow success states
                 if (state is FollowUserSuccessState) {
                   setState(() {
                     isFollowingList[widget.users.indexOf(user)] = true;
-                    _sortUsers(); // Re-sort users when follow action succeeds
+                    _sortUsers();
                   });
                 } else if (state is UnFollowUserSuccessState) {
                   setState(() {
                     isFollowingList[widget.users.indexOf(user)] = false;
-                    _sortUsers(); // Re-sort users when unfollow action succeeds
+                    _sortUsers();
                   });
                 }
               },
@@ -77,14 +71,11 @@ class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
                   isFollowing: isFollowing,
                   onFollowPressed: () {
                     if (isFollowing) {
-                      // Trigger unfollow
                       context.read<FollowUnfollowBloc>().add(
                           OnUnFollowButtonClickedEvent(followerId: user.id));
                     } else {
-                      // Trigger follow
-                      context
-                          .read<FollowUnfollowBloc>()
-                          .add(OnFollowButtonClickedEvent(followerId: user.id));
+                      context.read<FollowUnfollowBloc>().add(
+                          OnFollowButtonClickedEvent(followerId: user.id));
                     }
                   },
                   isLoading: state is FollowUserLoadingState ||
@@ -137,8 +128,7 @@ class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
             ),
           ),
           ElevatedButton(
-            onPressed:
-                isLoading ? null : onFollowPressed, // Disable button if loading
+            onPressed: isLoading ? null : onFollowPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: isFollowing ? Colors.grey : kGreen,
               shape: RoundedRectangleBorder(

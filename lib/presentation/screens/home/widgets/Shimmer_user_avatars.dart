@@ -38,7 +38,8 @@ class ShimmerUserAvatars extends StatelessWidget {
                               width: 80,
                               height: 80,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.green, width: 2.0),
+                                border:
+                                    Border.all(color: Colors.green, width: 2.0),
                                 borderRadius: BorderRadius.circular(22),
                               ),
                             ),
@@ -70,18 +71,21 @@ class ShimmerUserAvatars extends StatelessWidget {
                             width: 80,
                             height: 80,
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.green, width: 2.0),
+                              border:
+                                  Border.all(color: Colors.green, width: 2.0),
                               borderRadius: BorderRadius.circular(22),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
-                              child: Image.network(users![index].profilePic, fit: BoxFit.cover),
+                              child: Image.network(users![index].profilePic,
+                                  fit: BoxFit.cover),
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             users![index].userName,
-                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12),
                           ),
                         ],
                       ),
@@ -97,16 +101,16 @@ class ShimmerUserAvatars extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        TextButton(
-          onPressed: onSeeAllPressed,
-          child: const Row(
-            children: [
-              Text('See All', style: TextStyle(color: Colors.green)),
-              SizedBox(width: 4),
-              Icon(Icons.arrow_forward_ios, color: Colors.green, size: 16),
-            ],
-          ),
-        ),
+        // TextButton(
+        //   onPressed: onSeeAllPressed,
+        //   child: const Row(
+        //     children: [
+        //       Text('See All', style: TextStyle(color: Colors.green)),
+        //       SizedBox(width: 4),
+        //       Icon(Icons.arrow_forward_ios, color: Colors.green, size: 16),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
