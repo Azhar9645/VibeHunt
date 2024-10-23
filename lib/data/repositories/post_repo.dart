@@ -126,7 +126,7 @@ class PostRepo {
       final token = await getUsertoken();
       var response = await client.get(
           Uri.parse(
-              '${ApiEndpoints.baseUrl}${ApiEndpoints.allFollowingsPost}?page=$page&pageSize=5'),
+              '${ApiEndpoints.baseUrl}${ApiEndpoints.allFollowingsPost}?page=$page&pageSize=8'),
           headers: {'Authorization': 'Bearer $token'});
 
       return response;

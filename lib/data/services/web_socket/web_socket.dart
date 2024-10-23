@@ -12,7 +12,7 @@ import 'package:vibehunt/utils/funtions.dart';
 
 class SocketService {
   io.Socket socket = io.io(
-    'wss://zdm5p3m3-7002.inc1.devtunnels.ms', // Update with the WebSocket URL
+    'https://azhar11.online', // Update with the WebSocket URL
         // 'api.azhar11.online', // Update with the WebSocket URL
 
     io.OptionBuilder()

@@ -768,6 +768,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  insta_like_button:
+    dependency: "direct main"
+    description:
+      name: insta_like_button
+      sha256: "3195ddb12ce8b2b7bedf13e56e25fc7bbd46b98c217f9692f98b938f42eba380"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   intl:
     dependency: "direct main"
     description:

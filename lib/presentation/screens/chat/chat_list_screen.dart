@@ -7,6 +7,7 @@ import 'package:vibehunt/data/models/conversation_model.dart';
 import 'package:vibehunt/data/models/get_users_chat_model.dart';
 import 'package:vibehunt/presentation/screens/chat/chat_screen.dart';
 import 'package:vibehunt/presentation/screens/explore/components/secondary_search_field.dart';
+import 'package:vibehunt/presentation/screens/rive_screen.dart/rive_loading.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/get_all_conversation.dart/get_all_conversation_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 
@@ -48,18 +49,18 @@ class _ChatListScreenState extends State<ChatListScreen> {
       appBar: AppBar(title: Text('Message', style: j24)),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SecondarySearchField(
-              controller: searchController,
-              onTextChanged: (String value) {
-                setState(() {
-                  searchQuery = value;
-                });
-              },
-              onTap: () {},
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(16),
+          //   child: SecondarySearchField(
+          //     controller: searchController,
+          //     onTextChanged: (String value) {
+          //       setState(() {
+          //         searchQuery = value;
+          //       });
+          //     },
+          //     onTap: () {},
+          //   ),
+          // ),
           Expanded(
             child: CustomMaterialIndicator(
               onRefresh: refresh,
@@ -67,7 +68,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   BlocBuilder<GetAllConversationBloc, GetAllConversationState>(
                 builder: (context, state) {
                   if (state is GetAllConversationLoadingState) {
-                    return const Center(child: CircularProgressIndicator());
+                    return RiveLoadingScreen();
                   } else if (state is GetAllConversationSuccessState) {
                     final conversations = state.conversations;
                     final users = state.otherUsers;

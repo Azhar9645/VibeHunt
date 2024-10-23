@@ -289,7 +289,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         if (state is FetchAllFollowingPostLoading) {
           return ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 5,
+            itemCount: 8,
             itemBuilder: (context, index) {
               return const CircularProgressIndicator();
             },
@@ -301,7 +301,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
             itemCount: posts.length,
             itemBuilder: (context, index) {
               final post = posts[index];
-              return _buildThumbnailCard(post.image, post.userId.profilePic);
+              return _buildThumbnailCard(
+                  post.image, post.userId.profilePic, index);
             },
           );
         } else if (state is FetchAllFollowingPostErrorState) {
@@ -320,7 +321,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget _buildThumbnailCard(String? imageUrl, String? profilePictureUrl) {
+  // Modify the _buildThumbnailCard to pass the post index or post ID
+  Widget _buildThumbnailCard(
+      String? imageUrl, String? profilePictureUrl, int index) {
     final defaultImageUrl = 'https://via.placeholder.com/150';
     final defaultProfilePictureUrl = 'https://via.placeholder.com/100';
 
@@ -332,10 +335,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
           GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ScreenExplore(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ScreenExplorePost(
+                    index: index,
+                  ),
+                ),
+              );
             },
             child: SizedBox(
               height: 320,

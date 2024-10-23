@@ -15,9 +15,12 @@ class SavedScreenPost extends StatelessWidget {
   SavedScreenPost({super.key, required this.model});
 
   final List<SavedPostModel> model;
-  final TextEditingController commentController = TextEditingController();
+  TextEditingController commentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final List<Comment> _comments = [];
+  List<SavedPostModel> savedposts = [];
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +49,7 @@ class SavedScreenPost extends StatelessWidget {
                         ? formatDate(state.posts[index].createdAt.toString())
                         : ("${formatDate(state.posts[index].editedTime.toString())} (Edited)"),
                     description: state.posts[index].postId.description,
+                    tags: state.posts[index].postId.tags,
                     likeCount:
                         state.posts[index].postId.likes.length.toString(),
                     commentCount: '',

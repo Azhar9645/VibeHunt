@@ -1,8 +1,7 @@
 class ApiEndpoints {
   // BaseURL
-  static const String baseUrl = 'https://zdm5p3m3-7002.inc1.devtunnels.ms/api';
-    // static const String baseUrl = 'https://api.azhar11.online';
-
+  static const String baseUrl = 'https://azhar11.online/api';
+    // static const String baseUrl = 'https://zdm5p3m3-7002.inc1.devtunnels.ms/api';
 
   // UserUrl
   static const String signUp = '/users/send-otp';

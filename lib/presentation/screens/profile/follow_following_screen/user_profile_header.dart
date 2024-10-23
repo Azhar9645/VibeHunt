@@ -48,28 +48,32 @@ class UserProfileHeader extends StatelessWidget {
               height: 190.h,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(coverImage),
+                  image: coverImage.isNotEmpty
+                      ? NetworkImage(coverImage)
+                      : const NetworkImage(
+                          'https://via.placeholder.com/150'), // Fallback to placeholder
                   fit: BoxFit.cover,
                 ),
               ),
             ),
+
             // Menu Icon
-            Positioned(
-              top: 20.h,
-              right: 20.w,
-              child: IconButton(
-                icon: Icon(Icons.menu, color: Colors.white, size: 35.sp),
-                onPressed: () {
-                  // showModalBottomSheet(
-                  //   context: context,
-                  //   isScrollControlled: true,
-                  //   builder: (BuildContext context) {
-                  //     return const ProfileOptionsBottomSheet();
-                  //   },
-                  // );
-                },
-              ),
-            ),
+            // Positioned(
+            //   top: 20.h,
+            //   right: 20.w,
+            //   child: IconButton(
+            //     icon: Icon(Icons.menu, color: Colors.white, size: 35.sp),
+            //     onPressed: () {
+            //       showModalBottomSheet(
+            //         context: context,
+            //         isScrollControlled: true,
+            //         builder: (BuildContext context) {
+            //           return const ProfileOptionsBottomSheet();
+            //         },
+            //       );
+            //     },
+            //   ),
+            // ),
             // Profile Container Background
             Positioned(
               bottom: -50.r, // Adjusted for better fit
@@ -98,9 +102,14 @@ class UserProfileHeader extends StatelessWidget {
               left: MediaQuery.of(context).size.width / 2 - 56.r,
               child: CircleAvatar(
                 radius: 60.r,
-                backgroundImage: NetworkImage(profileImage),
+                backgroundImage: profileImage.isNotEmpty
+                    ? NetworkImage(
+                        profileImage) // Load network image if URL is valid
+                    : const NetworkImage(
+                        'https://via.placeholder.com/150'), // Fallback to placeholder image
               ),
             ),
+
             // Followers Section
             Positioned(
               bottom: -20.r, // Adjusted to fit within view

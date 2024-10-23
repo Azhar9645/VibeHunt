@@ -10,14 +10,16 @@ import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_al
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_following_post/fetch_all_following_post_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 
-class ScreenExplore extends StatefulWidget {
-  const ScreenExplore({super.key});
+class ScreenExplorePost extends StatefulWidget {
+  final int index; // Pass the initial index of the post
+
+  const ScreenExplorePost({Key? key, required this.index}) : super(key: key);
 
   @override
-  State<ScreenExplore> createState() => _ScreenExploreState();
+  State<ScreenExplorePost> createState() => _ScreenExploreState();
 }
 
-class _ScreenExploreState extends State<ScreenExplore> {
+class _ScreenExploreState extends State<ScreenExplorePost> {
   TextEditingController commentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final List<Comment> _comments = [];
@@ -30,6 +32,7 @@ class _ScreenExploreState extends State<ScreenExplore> {
   void initState() {
     super.initState();
     _fetchInitialData();
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -119,6 +122,7 @@ class _ScreenExploreState extends State<ScreenExplore> {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
+      controller: ScrollController(initialScrollOffset: widget.index * 500),
       itemCount: posts.length,
       itemBuilder: (context, index) {
         return buildPostTile(

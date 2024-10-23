@@ -71,6 +71,7 @@ dependencies:
   tap_to_expand: ^0.7.2
   flutter_easy_faq: ^1.0.1
   flutter_launcher_icons: ^0.14.1
+  insta_like_button: ^0.1.1
   
 
 dev_dependencies:

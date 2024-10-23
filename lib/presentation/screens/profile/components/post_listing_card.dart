@@ -15,7 +15,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class PostListingCard extends StatelessWidget {
   final List<MyPostModel> post;
-  final String? mainImage; // Nullable 
+  final String? mainImage; // Nullable
   final String? profileImage; // Nullable
   final String userName;
   final String postTime;
@@ -223,25 +223,32 @@ class PostListingCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          CustomLikeButton(),
-                          CustomCommentButton(
-                            onPressed: commentButtonPressed,
-                          ),
-                          CustomSaveButton(
-                            isSaved: true,
+                          IconButton(
                             onPressed: () {},
+                            icon: Icon(
+                              Icons.favorite_border,
+                              color: kGreen,
+                            ),
+                            iconSize: 35,
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.mode_comment_outlined,
+                            ),
+                            iconSize: 35,
+                            color: kGreen,
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.bookmark_border,
+                              color: kGreen,
+                              size: 35,
+                            ),
                           ),
                         ],
-                      ),
-                      Row(
-                        children: [
-                          Text('$likeCount likes'),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text('$commentCount Comments')
-                        ],
-                      ),
+                      )
                     ],
                   )
                 ],
