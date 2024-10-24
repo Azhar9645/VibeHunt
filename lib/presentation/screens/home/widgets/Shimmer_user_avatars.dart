@@ -77,7 +77,7 @@ class ShimmerUserAvatars extends StatelessWidget {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
-                              child: Image.network(users![index].profilePic,
+                              child: Image.network(users![index].profilePic!,
                                   fit: BoxFit.cover),
                             ),
                           ),

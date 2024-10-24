@@ -18,6 +18,7 @@ import 'package:vibehunt/presentation/screens/profile/components/custom_buttons/
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_comments/fetch_all_comments_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_following_post/fetch_all_following_post_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_users_bloc.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/get_all_users/get_all_users_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/sign_in_user_details_bloc/signin_user_details_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -54,8 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
         .read<FetchAllUsersBloc>()
         .add(OnFetchAllUserEvent(page: 1, limit: 10));
     context.read<SigninUserDetailsBloc>().add(OnSigninUserDataFetchEvent());
-    context.read<FetchAllFollowingPostBloc>().add(
-        AllFollowingsPostsInitialFetchEvent()); 
+    context
+        .read<FetchAllFollowingPostBloc>()
+        .add(AllFollowingsPostsInitialFetchEvent());
+    context.read<GetAllUsersBloc>().add(FetchGetAllUsersEvent());
+
     getToken();
   }
 
@@ -122,8 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           } else if (state is FetchAllFollowingPostSuccess) {
             // Handle successful fetching of all followers' posts
-            _posts = state.posts; 
-            _isLoadingMore = false; 
+            _posts = state.posts;
+            _isLoadingMore = false;
             return _buildPostsListView(_posts);
           } else if (state is FetchMorePostSuccessState) {
             // Handle loading more posts
@@ -163,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
           commentController: commentControllers,
           formKey: _formKey,
           comments: _comments,
-          savedposts:savedposts,
+          savedposts: savedposts,
           onCommentTap: () {
             context
                 .read<FetchAllCommentsBloc>()

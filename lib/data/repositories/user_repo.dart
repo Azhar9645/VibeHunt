@@ -150,6 +150,24 @@ class UserRepo {
   }
 }
 
+//   static Future<Response?> fetchAllUser(int page, int limit) async {
+//   try {
+//     final token = await getUsertoken();
+//     var response = await client.get(
+//       Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.allUsers}?page=$page&limit=$limit'),
+//       headers: {'Authorization': 'Bearer $token'},
+//     );
+    
+//     log('Response status: ${response.statusCode}');
+//     log('Response body: ${response.body}');
+    
+//     return response;
+//   } catch (e) {
+//     log(e.toString());
+//     return null;
+//   }
+// }
+
  static Future fetchFollowers() async {
     try {
       final token = await getUsertoken();

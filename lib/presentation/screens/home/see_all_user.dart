@@ -1,36 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibehunt/data/models/all_user_model.dart';
+import 'package:vibehunt/presentation/screens/rive_screen.dart/rive_loading.dart';
+import 'package:vibehunt/presentation/viewmodel/bloc/fetch_all_users/fetch_all_users_bloc.dart';
 import 'package:vibehunt/presentation/viewmodel/bloc/follow_unfollow_bloc/follow_unfollow_bloc.dart';
 import 'package:vibehunt/utils/constants.dart';
 
 class SeeAllUsersPage extends StatefulWidget {
-  final List<AllUser> users;
-
-  const SeeAllUsersPage({Key? key, required this.users}) : super(key: key);
+  const SeeAllUsersPage({Key? key}) : super(key: key);
 
   @override
   _SeeAllUsersPageState createState() => _SeeAllUsersPageState();
 }
 
 class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
+  List<AllUser> allUsers = [];
   late List<AllUser> sortedUsers;
-  late List<bool> isFollowingList;
+  List<bool> isFollowingList = [];
+  int currentPage = 1;
+  final int pageLimit = 10;
 
   @override
   void initState() {
     super.initState();
-    // Track follow/unfollow status for each user
-    isFollowingList = List.generate(widget.users.length, (_) => false);
-    // Sort users at the beginning
-    sortedUsers = List.from(widget.users);
+    // Initialize following status for each user
+    isFollowingList = List.generate(allUsers.length, (_) => false);
+    // Sort users initially
+    sortedUsers = List.from(allUsers);
   }
 
+  // Sorting logic to move followed users to the bottom
   void _sortUsers() {
-    // Sort users: Unfollowed users at the top, followed users at the bottom
     sortedUsers.sort((a, b) {
-      bool isAFollowed = isFollowingList[widget.users.indexOf(a)];
-      bool isBFollowed = isFollowingList[widget.users.indexOf(b)];
+      bool isAFollowed = isFollowingList[allUsers.indexOf(a)];
+      bool isBFollowed = isFollowingList[allUsers.indexOf(b)];
       return isAFollowed == isBFollowed ? 0 : (isAFollowed ? 1 : -1);
     });
   }
@@ -41,54 +44,79 @@ class _SeeAllUsersPageState extends State<SeeAllUsersPage> {
       appBar: AppBar(
         title: Text('All Users', style: j24),
       ),
-      body: ListView.builder(
-        itemCount: sortedUsers.length,
-        itemBuilder: (context, index) {
-          final user = sortedUsers[index];
-          return BlocProvider(
-            create: (context) => FollowUnfollowBloc(),
-            child: BlocConsumer<FollowUnfollowBloc, FollowUnfollowState>(
-              listener: (context, state) {
-                if (state is FollowUserSuccessState) {
-                  setState(() {
-                    isFollowingList[widget.users.indexOf(user)] = true;
-                    _sortUsers();
-                  });
-                } else if (state is UnFollowUserSuccessState) {
-                  setState(() {
-                    isFollowingList[widget.users.indexOf(user)] = false;
-                    _sortUsers();
-                  });
-                }
-              },
-              builder: (context, state) {
-                bool isFollowing = isFollowingList[widget.users.indexOf(user)];
-
-                return _buildUserListItem(
-                  context: context,
-                  profileImageUrl: user.profilePic,
-                  username: user.userName,
-                  isFollowing: isFollowing,
-                  onFollowPressed: () {
-                    if (isFollowing) {
-                      context.read<FollowUnfollowBloc>().add(
-                          OnUnFollowButtonClickedEvent(followerId: user.id));
-                    } else {
-                      context.read<FollowUnfollowBloc>().add(
-                          OnFollowButtonClickedEvent(followerId: user.id));
-                    }
-                  },
-                  isLoading: state is FollowUserLoadingState ||
-                      state is UnFollowUserLoadingState,
-                );
-              },
-            ),
-          );
-        },
+      body: BlocProvider(
+        create: (context) => FetchAllUsersBloc()
+          ..add(OnFetchAllUserEvent(page: currentPage, limit: pageLimit)),
+        child: BlocConsumer<FetchAllUsersBloc, FetchAllUsersState>(
+          listener: (context, state) {
+            if (state is FetchAllUsersSuccessState) {
+              setState(() {
+                allUsers.addAll(state.users);
+                isFollowingList.addAll(List.generate(state.users.length, (_) => false));
+                _sortUsers(); // Sort after fetching new users
+              });
+            }
+          },
+          builder: (context, state) {
+            if (state is FetchAllUsersLoadingState && allUsers.isEmpty) {
+              return RiveLoadingScreen();
+            } else if (state is FetchAllUsersErrorState) {
+              return Center(child: Text(state.error));
+            } else {
+              return ListView.builder(
+                itemCount: allUsers.length,
+                itemBuilder: (context, index) {
+                  final user = allUsers[index];
+                  return BlocProvider(
+                    create: (context) => FollowUnfollowBloc(),
+                    child: BlocConsumer<FollowUnfollowBloc, FollowUnfollowState>(
+                      listener: (context, followState) {
+                        if (followState is FollowUserSuccessState) {
+                          setState(() {
+                            isFollowingList[allUsers.indexOf(user)] = true;
+                            _sortUsers(); // Move followed user to the bottom
+                          });
+                        } else if (followState is UnFollowUserSuccessState) {
+                          setState(() {
+                            isFollowingList[allUsers.indexOf(user)] = false;
+                            _sortUsers(); // Move unfollowed user back up
+                          });
+                        }
+                      },
+                      builder: (context, followState) {
+                        bool isFollowing = isFollowingList[allUsers.indexOf(user)];
+                        return _buildUserListItem(
+                          context: context,
+                          profileImageUrl: user.profilePic!,
+                          username: user.userName,
+                          isFollowing: isFollowing,
+                          onFollowPressed: () {
+                            if (isFollowing) {
+                              context.read<FollowUnfollowBloc>().add(
+                                  OnUnFollowButtonClickedEvent(
+                                      followerId: user.id));
+                            } else {
+                              context.read<FollowUnfollowBloc>().add(
+                                  OnFollowButtonClickedEvent(
+                                      followerId: user.id));
+                            }
+                          },
+                          isLoading: followState is FollowUserLoadingState ||
+                              followState is UnFollowUserLoadingState,
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }
 
+  // Widget to build each user item in the list
   Widget _buildUserListItem({
     required BuildContext context,
     required String profileImageUrl,
